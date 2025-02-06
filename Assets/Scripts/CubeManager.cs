@@ -85,9 +85,15 @@ public class CubeManager : MonoBehaviour
 
                 // 使用预制体实例化 Cube
                 GameObject cube = Instantiate(cubePrefab, position, Quaternion.identity);
-                
+
                 // 通过 tileId 查找对应的 tile 信息
                 Tile tileData = config.tiles.FirstOrDefault(t => t.id == tileId);
+
+                // 为了方便后续在游戏中查找格子，添加 TileController 组件
+                TileController tc = cube.AddComponent<TileController>();
+                tc.tileData = tileData;  // 来自 JSON 的数据
+                tc.tileIndex = index;    // 此格子在数组中的索引（顺序决定玩家走的路径）
+                
                 if (tileData != null)
                 {
                     // 设置 Cube 的名称为 tile 名称
@@ -100,7 +106,7 @@ public class CubeManager : MonoBehaviour
                     {
                         rend.material.color = Color.Lerp(Color.green, Color.red, colorValue);
                     }
-
+                    Debug.Log("生成 tile : " + tileData.name);
                     // 可以在此处为 Cube 添加其它逻辑或组件，例如点击事件等
                 }
             }
