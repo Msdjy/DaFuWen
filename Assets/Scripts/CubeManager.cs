@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq; // 用于 List 查找
+using TMPro;
 
 // 注意：由于 JsonUtility 不直接支持嵌套数组，这里将二维数组转换成一维列表，并保存行数和列数信息
 [System.Serializable]
@@ -92,8 +93,8 @@ public class CubeManager : MonoBehaviour
                 // 为了方便后续在游戏中查找格子，添加 TileController 组件
                 TileController tc = cube.AddComponent<TileController>();
                 tc.tileData = tileData;  // 来自 JSON 的数据
-                tc.tileIndex = index;    // 此格子在数组中的索引（顺序决定玩家走的路径）
-                
+                tc.tileIndex = tileId;    // 此格子在数组中的索引（顺序决定玩家走的路径）
+
                 if (tileData != null)
                 {
                     // 设置 Cube 的名称为 tile 名称
@@ -106,10 +107,52 @@ public class CubeManager : MonoBehaviour
                     {
                         rend.material.color = Color.Lerp(Color.green, Color.red, colorValue);
                     }
-                    Debug.Log("生成 tile : " + tileData.name);
-                    // 可以在此处为 Cube 添加其它逻辑或组件，例如点击事件等
                 }
+
+                Debug.Log("生成 tile : " + tileData.name);
+
+                // 添加子物体来显示文字
+                CreateTextForCube(cube, tileData, tileId);
             }
         }
     }
+
+    /// <summary>
+    /// 在 Cube 上添加一个 TextMesh 用于显示 tile 的 name 和 index
+    /// </summary>
+    /// <param name="cube">Cube 实例</param>
+    /// <param name="tileData">对应的 tile 数据</param>
+    /// <param name="index">该 Cube 的索引</param>
+    void CreateTextForCube(GameObject cube, Tile tileData, int index)
+    {
+        // 创建一个空的子物体
+        GameObject textObj = new GameObject("TileText");
+        // 将其设为 cube 的子物体
+        textObj.transform.SetParent(cube.transform);
+        // 使文本位于 Cube 正上方（根据需要调整偏移量）
+        textObj.transform.localPosition = new Vector3(0, 1.5f, 0);
+        
+        // 旋转使得文字朝上（文字的 forward 指向全局 Y 轴正方向）
+        textObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        // 设置局部缩放为均匀（防止文字被拉伸）
+        textObj.transform.localScale = Vector3.one;
+
+        // 添加 TextMeshPro 组件
+        TextMeshPro textMeshPro = textObj.AddComponent<TextMeshPro>();
+        // 设置文本内容，显示 tile 名称和索引（如果 tileData 不为空）
+        if (tileData != null)
+        {
+            textMeshPro.text = $"{tileData.name}\nIndex: {index}";
+        }
+        else
+        {
+            textMeshPro.text = $"Index: {index}";
+        }
+
+        // 设置其他文本属性，根据需要调整
+        textMeshPro.fontSize = 4;
+        textMeshPro.alignment = TextAlignmentOptions.Center;
+        textMeshPro.color = Color.black;
+    }
+
 }

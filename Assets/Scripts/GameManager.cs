@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public Text infoText;
     // 掷骰子按钮
     public Button rollDiceButton;
+    // 假设你已经在 Inspector 中引用了一个支持中文的 TMP_FontAsset 资源
+    public TMP_FontAsset chineseFontAsset;
 
     // 玩家列表（示例中创建 2 个玩家）
     private List<Player> players = new List<Player>();
@@ -58,13 +60,47 @@ public class GameManager : MonoBehaviour
             newPlayer.name = "Player " + (i + 1);
             newPlayer.money = 1500; // 初始金钱
             newPlayer.currentTile = 0; // 从起始格子（索引 0）开始
+
             // 在起始格子位置生成玩家头像（可适当上移一点以便显示在棋盘上方）
-            Vector3 startPos = GetTilePosition(0) + new Vector3(0, 1, 0);
+            Vector3 startPos = GetTilePosition(1) + new Vector3(0, 1, 0);
             GameObject avatar = Instantiate(playerPrefab, startPos, Quaternion.identity);
             newPlayer.avatar = avatar;
             players.Add(newPlayer);
+
+            // 为玩家头像添加上方显示玩家信息的文本
+            CreatePlayerTextForAvatar(avatar, newPlayer);
         }
     }
+
+    void CreatePlayerTextForAvatar(GameObject avatar, Player player)
+    {
+        // 创建一个空子物体
+        GameObject textObj = new GameObject("PlayerInfo");
+        // 将其设为玩家头像的子物体
+        textObj.transform.SetParent(avatar.transform);
+        
+        // 调整局部位置，使文字出现在玩家头像上方（可根据需要调整偏移量）
+        textObj.transform.localPosition = new Vector3(0, 4f, 0);
+        
+        // 旋转文字使其朝上。这里采用和 Cube 上文字相似的旋转角度（根据实际效果微调）
+        textObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        
+        // 确保缩放均匀
+        textObj.transform.localScale = Vector3.one;
+
+        // 添加 TextMeshPro 组件
+        TextMeshPro textMeshPro = textObj.AddComponent<TextMeshPro>();
+        // 设置文本内容：玩家名称和当前资金
+        textMeshPro.text = $"{player.name}\nMoney: ${player.money}";
+        
+        // 调整文本属性，根据需要微调字号、对齐方式、颜色等
+        // textMeshPro.font = chineseFontAsset;
+        textMeshPro.fontSize = 3;  
+        textMeshPro.alignment = TextAlignmentOptions.Center;
+        textMeshPro.color = Color.white;
+    }
+
+
 
     // 根据棋盘格子索引获取该格子的世界坐标
     Vector3 GetTilePosition(int tileIndex)
@@ -124,7 +160,7 @@ public class GameManager : MonoBehaviour
     {
         while (player.currentTile != destinationIndex)
         {
-            int nextTile = (player.currentTile + 1) % boardTiles.Count;
+            int nextTile = (player.currentTile + 1) % (boardTiles.Count + 1);
             Vector3 targetPos = GetTilePosition(nextTile) + new Vector3(0, 1, 0);
             // 逐帧移动到下一个格子
             while (Vector3.Distance(player.avatar.transform.position, targetPos) > 0.1f)
