@@ -118,7 +118,7 @@ public class CubeManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 在 Cube 上添加一个 TextMesh 用于显示 tile 的 name 和 index
+    /// 在 Cube 上添加一个 TextMesh 用于显示 tile 的 name、索引和拥有者信息
     /// </summary>
     /// <param name="cube">Cube 实例</param>
     /// <param name="tileData">对应的 tile 数据</param>
@@ -139,20 +139,29 @@ public class CubeManager : MonoBehaviour
 
         // 添加 TextMeshPro 组件
         TextMeshPro textMeshPro = textObj.AddComponent<TextMeshPro>();
-        // 设置文本内容，显示 tile 名称和索引（如果 tileData 不为空）
+        // 初始时显示 tile 名称和拥有者信息（无人拥有时显示 Unowned）
         if (tileData != null)
         {
-            textMeshPro.text = $"{tileData.name}\nIndex: {index}";
+            textMeshPro.text = $"{tileData.name}\nUnowned";
         }
         else
         {
-            textMeshPro.text = $"Index: {index}";
+            textMeshPro.text = $"Index: {index}\nUnowned";
         }
-
+        
         // 设置其他文本属性，根据需要调整
         textMeshPro.fontSize = 4;
         textMeshPro.alignment = TextAlignmentOptions.Center;
         textMeshPro.color = Color.black;
+
+        // 将创建的文字组件赋值给 TileController 的 tileText 字段
+        TileController tc = cube.GetComponent<TileController>();
+        if (tc != null)
+        {
+            tc.tileText = textMeshPro;
+            tc.UpdateTileText(); // 更新文字内容（Owner信息会根据 tc.owner 显示）
+        }
     }
+
 
 }
