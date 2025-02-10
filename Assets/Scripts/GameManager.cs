@@ -5,10 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// GameManager 负责处理玩家回合、骰子、移动以及 Tile 事件（如购买、支付租金等），
-/// 而地图 Tile 仅用于在城市中显示位置，逻辑全部由 GameManager 单独处理。
-/// </summary>
 public class GameManager : MonoBehaviour
 {
     [Header("引用部分")]
@@ -28,6 +24,12 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI purchasePanelText;   // 显示提示信息
     public Button buyButton;                    // “购买”按钮
     public Button skipButton;                   // “不购买”按钮
+
+    [Header("UI部分")]
+    [Tooltip("左上角显示玩家信息的 Text")]
+    public Text leftPlayerInfoText;   // 普通 Text 组件
+    [Tooltip("右上角显示玩家信息的 Text")]
+    public Text rightPlayerInfoText;  // 普通 Text 组件
 
     private List<Player> players = new List<Player>();
     private int currentPlayerIndex = 0;
@@ -81,35 +83,55 @@ public class GameManager : MonoBehaviour
             newPlayer.money = 1500; // 初始资金
             newPlayer.currentTileIndex = 0; // 从起始 Tile（索引 0）开始
 
+            // 为玩家指定颜色
+            if (i == 0)
+            {
+                newPlayer.playerColor = Color.red; // 玩家 1 为红色
+            }
+            else
+            {
+                newPlayer.playerColor = Color.green; // 玩家 2 为绿色
+            }
+
             // 根据 MapManager 中保存的 Tile 位置生成玩家头像
             Vector3 startPos = GetTilePosition(newPlayer.currentTileIndex) + new Vector3(0, 0, 0);
             GameObject avatar = Instantiate(playerPrefab, startPos, Quaternion.identity);
             newPlayer.avatar = avatar;
+
+            // 设置玩家头像颜色
+            MeshRenderer avatarRenderer = avatar.GetComponentInChildren<MeshRenderer>();
+            if (avatarRenderer != null)
+            {
+                avatarRenderer.material.color = newPlayer.playerColor;  // 设置颜色
+            }
 
             CreatePlayerText(avatar, newPlayer);
             players.Add(newPlayer);
         }
     }
 
-
     /// <summary>
-    /// 在玩家头像上添加用于显示玩家名称和资金信息的 TextMeshPro 子物体
+    /// 在玩家头像上添加用于显示玩家名称和资金信息的 TextMeshProUGUI 子物体
     /// </summary>
     void CreatePlayerText(GameObject avatar, Player player)
     {
+        // 创建显示玩家信息的 TextMeshProUGUI
         GameObject textObj = new GameObject("PlayerInfo");
         textObj.transform.SetParent(avatar.transform);
         textObj.transform.localPosition = new Vector3(0, 2.5f, 0);
         textObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
         textObj.transform.localScale = Vector3.one;
 
-        TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
+        // 使用 TextMeshProUGUI 来显示玩家信息
+        TextMeshProUGUI tmp = textObj.AddComponent<TextMeshProUGUI>();
         tmp.text = $"{player.name}\nMoney: ${player.money}";
-        tmp.fontSize = 3;
+        tmp.fontSize = 14;
         tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
+        tmp.color = player.playerColor;
 
         player.playerText = tmp;
+
+
     }
 
     /// <summary>
@@ -159,7 +181,6 @@ public class GameManager : MonoBehaviour
         rollDiceButton.interactable = true;
     }
 
-
     /// <summary>
     /// 模拟两个骰子（1～6），返回点数和
     /// </summary>
@@ -176,13 +197,12 @@ public class GameManager : MonoBehaviour
     IEnumerator MovePlayer(Player player, int steps)
     {
         int totalTiles = mapManager.tilePositions.Count;
+
         for (int i = 0; i < steps; i++)
         {
-            // 先更新玩家所在的格子索引（循环模式）
             player.currentTileIndex = (player.currentTileIndex + 1) % totalTiles;
-            Vector3 targetPos = GetTilePosition(player.currentTileIndex) + new Vector3(0, 0, 0);
-            
-            // 逐帧移动到目标位置
+            Vector3 targetPos = GetTilePosition(player.currentTileIndex);
+
             while (Vector3.Distance(player.avatar.transform.position, targetPos) > 0.1f)
             {
                 player.avatar.transform.position = Vector3.MoveTowards(
@@ -192,28 +212,29 @@ public class GameManager : MonoBehaviour
                 );
                 yield return null;
             }
+
             yield return new WaitForSeconds(0.1f);
         }
-    }
 
+        Debug.Log($"Player {player.name} is now at tile {player.currentTileIndex}");
+    }
 
     /// <summary>
     /// 根据当前 Tile 类型处理对应事件，如购买、支付租金等
     /// </summary>
     IEnumerator ProcessTileEvent(Player player, int tileIndex)
     {
-        TileController tile = boardTiles.Find(t => t.tileIndex == tileIndex);
+        int tileID = mapManager.tileIds[tileIndex];
+        TileController tile = boardTiles.Find(t => t.tileIndex == tileID);
         if (tile == null)
             yield break;
 
         if (tile.tileData != null && tile.tileData.price > 0)
         {
-            // 如果无人拥有，则显示购买面板等待玩家决策
             if (tile.owner < 0)
             {
                 yield return StartCoroutine(ShowPurchasePanel(player, tile));
             }
-            // 如果房产被其他玩家拥有，则支付租金
             else if (tile.owner != currentPlayerIndex)
             {
                 int rent = tile.tileData.rent;
@@ -224,9 +245,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // 其它类型 Tile（例如命运、税收、社区等）可在此扩展
             infoText.text += $"\n{player.name} 落在了 {(tile.tileData != null ? tile.tileData.name : "空白")} 格子";
         }
+
+        if (tile.owner == currentPlayerIndex)
+        {
+            MeshRenderer cubeRenderer = tile.GetComponentInChildren<MeshRenderer>();
+            if (cubeRenderer != null)
+            {
+                cubeRenderer.material.color = player.playerColor;
+            }
+        }
+
         yield return null;
     }
 
@@ -244,6 +274,7 @@ public class GameManager : MonoBehaviour
         {
             yield return null;
         }
+
         purchasePanel.SetActive(false);
 
         if (buyDecision)
@@ -266,6 +297,7 @@ public class GameManager : MonoBehaviour
         {
             infoText.text += $"\n{player.name} 放弃了购买 {tile.tileData.name}";
         }
+
         yield return null;
     }
 
@@ -301,5 +333,13 @@ public class GameManager : MonoBehaviour
             info += $"{p.name} - 资金: ${p.money}\n";
         }
         infoText.text = info;
+
+        // 更新左上角和右上角的玩家信息
+        leftPlayerInfoText.text = $"{players[0].name}\nMoney: ${players[0].money}";
+        rightPlayerInfoText.text = $"{players[1].name}\nMoney: ${players[1].money}";
+        // 根据玩家颜色设置左上角和右上角文本颜色
+        // TODO 不应该在这处理
+        leftPlayerInfoText.color = players[0].playerColor;
+        rightPlayerInfoText.color = players[1].playerColor;
     }
 }

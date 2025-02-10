@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class Player
 {
@@ -13,5 +14,8 @@ public class Player
     /// <summary>
     /// 用于显示玩家名称和资金信息的 TextMeshPro 组件
     /// </summary>
-    public TextMeshPro playerText;
+    public TextMeshProUGUI playerText;
+
+    // 新增的字段：玩家的颜色
+    public Color playerColor;
 }

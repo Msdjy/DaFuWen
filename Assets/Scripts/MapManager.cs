@@ -15,6 +15,9 @@ public class MapManager : MonoBehaviour
     public float spacing = 2.0f;
     [Tooltip("Tile 在 Y 轴上的偏移")]
     public float yOffset = 0f;
+    // Font asset reference for TextMeshPro
+    [Tooltip("TextMeshPro 字体文件")]
+    public TMP_FontAsset customFont;
     #endregion
 
     #region Runtime Data
@@ -124,16 +127,15 @@ public class MapManager : MonoBehaviour
 
         // 查找对应的 Tile 数据
         Tile tileData = config.tiles.FirstOrDefault(t => t.id == tileId);
-        if (tileData != null && (tileData.type == "event" || tileData.type == "Start"))
+        if (tileData != null && (tileData.type == "event" || tileData.type == "start"))
         {
             Debug.Log("跳过事件格子: " + tileData.name);
-            return;
         }
 
         Vector3 outerPosition = GetOuterPosition(r, c);
         Debug.Log("外圈位置 Y 坐标: " + outerPosition.y);
 
-        // 实例化 Cube，放置在外圈位置并缩放
+        // 实例化 Tile 对象
         GameObject tileObj = Instantiate(tilePrefab, outerPosition, Quaternion.identity);
         tileObj.transform.localScale *= 1.44f;
 
@@ -141,15 +143,37 @@ public class MapManager : MonoBehaviour
         tc.tileData = tileData;
         tc.tileIndex = tileId;
 
-        if (tileData != null)
+        // 假设 Cube 是 tileObj 的子物体，可以通过 Find 来查找它
+        Transform cubeTransform = tileObj.transform.Find("Cube");  // 这里的 "Cube" 是 Cube 子物体的名字
+        if (cubeTransform != null)
         {
-            tileObj.name = tileData.name;
-            float colorValue = Mathf.InverseLerp(400, 1000, tileData.price);
-            Renderer rend = tileObj.GetComponent<Renderer>();
-            if (rend != null)
-                rend.material.color = Color.Lerp(Color.green, Color.red, colorValue);
+            // 获取 Cube 的 MeshRenderer 组件
+            MeshRenderer cubeRenderer = cubeTransform.GetComponent<MeshRenderer>();
+            if (cubeRenderer != null)
+            {
+                // 根据 tile 类型设置颜色
+                Color tileColor = Color.white;
+                if (tileData != null)
+                {
+                    if (tileData.type == "event")
+                    {
+                        tileColor = Color.blue; // 事件格设置为蓝色
+                    }
+                    else if (tileData.type == "start")
+                    {
+                        tileColor = Color.yellow; // 开始格设置为黄色
+                    }
+                    else
+                    {
+                        // 其他格子
+                    }
+
+                    // 修改 Cube 的材质颜色
+                    cubeRenderer.material.color = tileColor;
+                }
+            }
         }
-        
+
         Debug.Log("生成 Tile: " + (tileData != null ? tileData.name : tileId.ToString()));
         Debug.Log($"tileData: id={tileData.id}, name={tileData.name}, type={tileData.type}, price={tileData.price}");
 
@@ -243,7 +267,7 @@ public class MapManager : MonoBehaviour
     }
     #endregion
 
-    #region UI Methods
+    #region UI 方法
     /// <summary>
     /// 在 Cube 上添加 TextMeshPro 子物体，用于显示 Tile 的名称和状态（例如 Unowned）
     /// </summary>
@@ -260,6 +284,12 @@ public class MapManager : MonoBehaviour
         tmp.fontSize = 4;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = Color.black;
+
+        // 设置自定义字体（如果已分配）
+        if (customFont != null)
+        {
+            tmp.font = customFont;
+        }
 
         TileController tc = tileObj.GetComponent<TileController>();
         if (tc != null)
