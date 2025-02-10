@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         tileEventManager.gameManager = this;
         tileEventManager.playerManager = playerManager;
 
-        playerManager.UpdateInfoText();
+        UpdateInfoText();
     }
 
     List<TileController> GetSortedTileControllers()
@@ -56,13 +56,22 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(tileEventManager.ProcessTileEvent(currentPlayer, currentPlayer.currentTileIndex));
 
         playerManager.SwitchPlayer();
-        playerManager.UpdateInfoText();
+        
+        UpdateInfoText();
         rollDiceButton.interactable = true;
     }
 
     int RollDice()
     {
         return Random.Range(1, 7) + Random.Range(1, 7);
+    }
+
+    public void UpdateInfoText()
+    {
+        string info = $"当前回合: {playerManager.players[playerManager.currentPlayerIndex].name}\n";
+        infoText.text = info;
+
+        playerManager.UpdatePlayerInfoText();
     }
     
 

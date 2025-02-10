@@ -9,6 +9,7 @@ public class TileEventManager : MonoBehaviour
     public PlayerManager playerManager;
     public GameObject purchasePanel;
     public TextMeshProUGUI purchasePanelText;
+    public Text eventInfoText;
     public Button buyButton;
     public Button skipButton;
     [Tooltip("TextMeshPro 字体文件")]
@@ -22,6 +23,8 @@ public class TileEventManager : MonoBehaviour
         purchasePanel.SetActive(false);
         buyButton.onClick.AddListener(OnBuyButtonClicked);
         skipButton.onClick.AddListener(OnSkipButtonClicked);
+        // 清空 eventInfoText
+        eventInfoText.text = "";
     }
 
     public IEnumerator ProcessTileEvent(Player player, int tileIndex)
@@ -42,12 +45,12 @@ public class TileEventManager : MonoBehaviour
                 int rent = tile.tileData.rent;
                 player.money -= rent;
                 playerManager.players[tile.owner].money += rent;
-                gameManager.infoText.text += $"\n{player.name} 向 {playerManager.players[tile.owner].name} 支付了租金 ${rent}";
+                eventInfoText.text = $"\n{player.name} 向 {playerManager.players[tile.owner].name} 支付了租金 ${rent}";
             }
         }
         else
         {
-            gameManager.infoText.text += $"\n{player.name} 落在了 {(tile.tileData != null ? tile.tileData.name : "空白")} 格子";
+            eventInfoText.text = $"\n{player.name} 落在了 {(tile.tileData != null ? tile.tileData.name : "空白")} 格子";
         }
 
         if (tile.owner == playerManager.currentPlayerIndex)
@@ -79,8 +82,6 @@ public class TileEventManager : MonoBehaviour
             yield return null;
         }
 
-        purchasePanel.SetActive(false);
-
         if (buyDecision)
         {
             if (player.money >= tile.tileData.price)
@@ -88,18 +89,18 @@ public class TileEventManager : MonoBehaviour
                 player.money -= tile.tileData.price;
                 tile.owner = playerManager.currentPlayerIndex;
                 tile.UpdateTileText();
-                gameManager.infoText.text += $"\n{player.name} 购买了 {tile.tileData.name}";
-                playerManager.UpdateInfoText();
+                eventInfoText.text = $"\n{player.name} 购买了 {tile.tileData.name}";
             }
             else
             {
-                gameManager.infoText.text += $"\n{player.name} 资金不足，无法购买 {tile.tileData.name}";
+                eventInfoText.text = $"\n{player.name} 资金不足，无法购买 {tile.tileData.name}";
             }
         }
         else
         {
-            gameManager.infoText.text += $"\n{player.name} 放弃了购买 {tile.tileData.name}";
+            eventInfoText.text = $"\n{player.name} 放弃了购买 {tile.tileData.name}";
         }
+        purchasePanel.SetActive(false);
     }
 
     void OnBuyButtonClicked()

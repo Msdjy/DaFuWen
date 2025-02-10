@@ -69,6 +69,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    // TODO 目前没用
     void CreatePlayerText(GameObject avatar, Player player)
     {
         GameObject textObj = new GameObject("PlayerInfo");
@@ -86,19 +87,7 @@ public class PlayerManager : MonoBehaviour
         player.playerText = tmp;
     }
 
-    public void UpdateInfoText()
-    {
-        string info = $"当前回合: {players[currentPlayerIndex].name}\n";
-        foreach (var p in players)
-        {
-            info += $"{p.name} - 资金: ${p.money}\n";
-        }
-        infoText.text = info;
-
-        UpdatePlayerInfoText();
-    }
-
-    void UpdatePlayerInfoText()
+    public void UpdatePlayerInfoText()
     {
         leftPlayerInfoText.text = $"{players[0].name}\nMoney: ${players[0].money}";
         rightPlayerInfoText.text = $"{players[1].name}\nMoney: ${players[1].money}";
