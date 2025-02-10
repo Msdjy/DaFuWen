@@ -5,21 +5,19 @@ public class TileController : MonoBehaviour
 {
     public Tile tileData;
     public int tileIndex;
-    // owner：-1 表示无人拥有，否则记录玩家的索引（0、1、…）
+    /// <summary>
+    /// owner 为 -1 表示无人拥有，否则存储拥有该 Tile 的玩家索引（0、1、…）
+    /// </summary>
     public int owner = -1;
 
-    // 存储显示该格子信息（名称、拥有者）的 TextMeshPro 组件
     public TextMeshPro tileText;
 
     /// <summary>
-    /// 更新格子上的显示文字。显示房产名称以及拥有者信息。
+    /// 更新 Tile 显示的文字信息（例如名称及拥有者）
     /// </summary>
     public void UpdateTileText()
     {
-        string ownerStr = (owner < 0) ? "Unowned" : $"Player {owner + 1}";
-        if (tileData != null)
-            tileText.text = $"{tileData.name}\n{ownerStr}";
-        else
-            tileText.text = $"Index: {tileIndex}\n{ownerStr}";
+        string ownerStr = owner < 0 ? "Unowned" : $"Player {owner + 1}";
+        tileText.text = tileData != null ? $"{tileData.name}\n{ownerStr}\n{tileIndex}" : $"Index: {tileIndex}\n{ownerStr}";
     }
 }

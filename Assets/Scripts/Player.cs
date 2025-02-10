@@ -5,8 +5,13 @@ public class Player
 {
     public string name;
     public int money;
-    public int currentTile;
+    /// <summary>
+    /// 当前玩家所在的 Tile 索引（对应 MapManager.tilePositions 中的下标）
+    /// </summary>
+    public int currentTileIndex;
     public GameObject avatar;
-    // 新增一个引用，用于保存玩家头像上显示信息的 TextMeshPro 组件
+    /// <summary>
+    /// 用于显示玩家名称和资金信息的 TextMeshPro 组件
+    /// </summary>
     public TextMeshPro playerText;
 }
