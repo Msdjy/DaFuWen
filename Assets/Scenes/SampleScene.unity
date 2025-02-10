@@ -1039,7 +1039,7 @@ MonoBehaviour:
   tilePrefab: {fileID: 590362341472999617, guid: 9f9cdf504c1d783448f54d7d3f6fa566, type: 3}
   spacing: 2
   yOffset: 0
-  customFont: {fileID: 11400000, guid: 9ad5e0e7489012d469e8a57514905940, type: 2}
+  customFont: {fileID: 11400000, guid: 8b113d3686488e84ba8bcf7ac21c8d2b, type: 2}
   config:
     map: 
     rows: 0
@@ -1217,8 +1217,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 400, y: 200}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 400, y: 150}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1146803953
 MonoBehaviour:
@@ -1247,7 +1247,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -1419,11 +1419,13 @@ MonoBehaviour:
   playerPrefab: {fileID: 5656479760880317746, guid: b6a258803c1ab0246bfdbf6137ff3c50, type: 3}
   infoText: {fileID: 2001562103}
   rollDiceButton: {fileID: 1417502948}
-  chineseFontAsset: {fileID: 11400000, guid: 9ad5e0e7489012d469e8a57514905940, type: 2}
+  chineseFontAsset: {fileID: 11400000, guid: 8b113d3686488e84ba8bcf7ac21c8d2b, type: 2}
   purchasePanel: {fileID: 1588605882}
   purchasePanelText: {fileID: 1308140671}
   buyButton: {fileID: 6069596}
   skipButton: {fileID: 573975999}
+  leftPlayerInfoText: {fileID: 1729276865}
+  rightPlayerInfoText: {fileID: 1146803953}
 --- !u!1 &1308140669
 GameObject:
   m_ObjectHideFlags: 0
@@ -1793,8 +1795,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: 200}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -400, y: 150}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1729276865
 MonoBehaviour:
@@ -1823,7 +1825,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
