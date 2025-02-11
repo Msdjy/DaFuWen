@@ -9,6 +9,7 @@ public class TileEventManager : MonoBehaviour
     public PlayerManager playerManager;
     public GameObject purchasePanel;
     public TextMeshProUGUI purchasePanelText;
+    public EventController eventController;  // 引用 EventController
     public Text eventInfoText;
     public Button buyButton;
     public Button skipButton;
@@ -119,6 +120,7 @@ public class TileEventManager : MonoBehaviour
         else if (tile.tileData != null && tile.tileData.type == "event")
         {
             eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子";
+            yield return StartCoroutine(TriggerEventCard(player));
         }
         // 开始格子
         else if (tile.tileData != null && tile.tileData.type == "start")
@@ -140,6 +142,7 @@ public class TileEventManager : MonoBehaviour
         // 村民格子
         else if (tile.tileData != null && tile.tileData.type == "villager")
         {
+            player.money += 300;
             eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $300";
         }
         // 资源格子
@@ -220,6 +223,23 @@ public class TileEventManager : MonoBehaviour
             eventInfoText.text = $"\n{player.name} 放弃了购买 {tile.tileData.name}";
         }
         purchasePanel.SetActive(false);
+    }
+
+        // 触发事件卡（正面或负面）
+    private IEnumerator TriggerEventCard(Player player)
+    {
+        // 随机选择一个事件卡
+        bool isPositiveEvent = Random.value > 0.5f;  // 随机选择正面或负面事件
+        if (isPositiveEvent)
+        {
+            int eventIndex = Random.Range(0, 8);  // 正面事件 0-7
+            yield return StartCoroutine(eventController.HandlePositiveEvent(player, eventIndex));
+        }
+        else
+        {
+            int eventIndex = Random.Range(0, 6);  // 负面事件 0-5
+            yield return StartCoroutine(eventController.HandleNegativeEvent(player, eventIndex));
+        }
     }
 
     void OnBuyButtonClicked()
