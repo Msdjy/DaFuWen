@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Linq;
+using System.Collections;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -39,6 +41,22 @@ public class PlayerManager : MonoBehaviour
         CreatePlayerText(avatar, newPlayer);
 
         return newPlayer;
+    }
+
+    // 添加 MovePlayer 方法
+    public IEnumerator MovePlayer(Player player, int steps)
+    {
+        for (int i = 0; i < steps; i++)
+        {
+            player.currentTileIndex = (player.currentTileIndex + 1) % mapManager.tilePositions.Count;
+            Vector3 targetPos = mapManager.tilePositions[player.currentTileIndex];
+            while (Vector3.Distance(player.avatar.transform.position, targetPos) > 0.1f)
+            {
+                player.avatar.transform.position = Vector3.MoveTowards(player.avatar.transform.position, targetPos, Time.deltaTime * 5f);
+                yield return null;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     Vector3 GetTilePosition(int tileIndex)

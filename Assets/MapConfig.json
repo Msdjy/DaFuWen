@@ -143,7 +143,7 @@
       "owner": -1,
       "level": 0,
       "desc": "遭遇海盗，下一轮暂停。",
-      "type": "event",
+      "type": "pirate",
       "upgradeCosts": [0, 0, 0],
       "upgradeRents": [0, 0, 0]
     },
@@ -203,7 +203,7 @@
       "owner": -1,
       "level": 0,
       "desc": "在此可购买资源卡。",
-      "type": "event",
+      "type": "market",
       "upgradeCosts": [0, 0, 0],
       "upgradeRents": [0, 0, 0]
     },
@@ -263,7 +263,7 @@
       "owner": -1,
       "level": 0,
       "desc": "当地居民热情招待，获得300金。",
-      "type": "event"
+      "type": "villager"
       },
       {
         "id": 22,
@@ -381,7 +381,7 @@
         "owner": -1,
         "level": 0,
         "desc": "抽取一张珍贵资源卡。",
-        "type": "event",
+        "type": "resource",
         "upgradeCosts": [140, 210, 290],
         "upgradeRents": [75, 110, 145]
       },  
@@ -441,7 +441,7 @@
         "owner": -1,
         "level": 0,
         "desc": "在此可购买资源卡。",
-        "type": "event",
+        "type": "market",
         "upgradeCosts": [140, 210, 290],
         "upgradeRents": [75, 110, 145]
       },

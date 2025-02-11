@@ -127,7 +127,7 @@ public class MapManager : MonoBehaviour
 
         // 查找对应的 Tile 数据
         Tile tileData = config.tiles.FirstOrDefault(t => t.id == tileId);
-        if (tileData != null && (tileData.type == "event" || tileData.type == "start"))
+        if (tileData != null && (tileData.type != "city"))
         {
             Debug.Log("跳过事件格子: " + tileData.name);
         }
@@ -162,6 +162,26 @@ public class MapManager : MonoBehaviour
                     else if (tileData.type == "start")
                     {
                         tileColor = Color.yellow; // 开始格设置为黄色
+                    }
+                    // 市场格子
+                    else if (tileData.type == "market")
+                    {
+                        tileColor = Color.green;
+                    }
+                    // 海盗格子
+                    else if (tileData.type == "pirate")
+                    {
+                        tileColor = Color.black;
+                    }
+                    // 村民格子
+                    else if (tileData.type == "villager")
+                    {
+                        tileColor = Color.cyan;
+                    }
+                    // 资源格子
+                    else if (tileData.type == "resource")
+                    {
+                        tileColor = Color.magenta;
                     }
                     else
                     {

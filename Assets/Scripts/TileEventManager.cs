@@ -30,6 +30,7 @@ public class TileEventManager : MonoBehaviour
         // 清空 eventInfoText
         eventInfoText.text = "";
 
+
     }
 
     // 自动购买并升级指定城市
@@ -62,7 +63,6 @@ public class TileEventManager : MonoBehaviour
                 if (player.money >= tile.tileData.upgradeCosts[tile.tileData.level])
                 {
                     tile.UpgradeCity(player); // 升级城市
-                    UpdateCityModel(tile); // 更新预制体模型
                     yield return new WaitForSeconds(1); // 延迟1秒后继续升级
                 }
                 else
@@ -77,50 +77,6 @@ public class TileEventManager : MonoBehaviour
         }
     }
 
-    // 根据等级更新城市模型
-    public void UpdateCityModel(TileController tile)
-    {
-        // 销毁现有的模型（如果存在） - 获取第三个子节点并销毁
-        if (tile.transform.childCount > 2) // 确保存在至少三个子节点
-        {
-            // 销毁第三个子节点，即城市模型
-            Destroy(tile.transform.GetChild(2).gameObject);
-        }
-
-        GameObject cityModel = null;
-
-        // 根据等级选择相应的预制体
-        switch (tile.tileData.level)
-        {
-            case 1:
-                cityModel = Instantiate(cityLevel1Prefab, tile.transform.position, Quaternion.identity, tile.transform);
-                break;
-            case 2:
-                cityModel = Instantiate(cityLevel2Prefab, tile.transform.position, Quaternion.identity, tile.transform);
-                break;
-            case 3:
-                cityModel = Instantiate(cityLevel3Prefab, tile.transform.position, Quaternion.identity, tile.transform);
-                break;
-        }
-
-        // 如果生成了模型，设置其缩放比例
-        if (cityModel != null)
-        {
-            cityModel.transform.localScale = new Vector3(0.06f, 0.30f, 0.06f); // 设置缩放比例
-
-            // 获取模型的 MeshRenderer 组件并设置颜色
-            MeshRenderer renderer = cityModel.GetComponentInChildren<MeshRenderer>();
-            if (renderer != null)
-            {
-                // 这里设置模型的颜色，可以替换为任何颜色
-                renderer.material.color = tile.owner == -1 ? Color.gray : playerManager.players[tile.owner].playerColor;
-            }
-        }
-
-        // 显示等级信息
-        Debug.Log($"{tile.tileData.name} 等级：{tile.tileData.level}");
-    }
-
 
     public IEnumerator ProcessTileEvent(Player player, int tileIndex)
     {
@@ -128,15 +84,18 @@ public class TileEventManager : MonoBehaviour
         TileController tile = gameManager.boardTiles.Find(t => t.tileIndex == tileID);
         if (tile == null)
             yield break;
-
-        if (tile.tileData != null && tile.tileData.price > 0)
+        
+        // 城市格子
+        if (tile.tileData != null && tile.tileData.type == "city")
         {
             if (tile.owner < 0)
             {
+                // 购买
                 yield return StartCoroutine(ShowPurchasePanel(player, tile)); // 如果该城市无人拥有，提供购买选择
             }
             else if (tile.owner != playerManager.currentPlayerIndex)
             {
+                // 租金
                 int rent = tile.tileData.rent;
                 player.money -= rent;
                 playerManager.players[tile.owner].money += rent;
@@ -147,7 +106,6 @@ public class TileEventManager : MonoBehaviour
                 // 如果玩家已经拥有该城市，提供升级选项
                 if (tile.tileData.level < 3)
                 {
-                    eventInfoText.text = $"{player.name}，是否要升级 {tile.tileData.name}?";
                     // 触发升级逻辑
                     yield return StartCoroutine(ShowUpgradePanel(player, tile));
                 }
@@ -157,7 +115,39 @@ public class TileEventManager : MonoBehaviour
                 }
             }
         }
-        else
+        // 事件格子
+        else if (tile.tileData != null && tile.tileData.type == "event")
+        {
+            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子";
+        }
+        // 开始格子
+        else if (tile.tileData != null && tile.tileData.type == "start")
+        {   
+            // 玩家+800
+            player.money += 800;
+            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $800";
+        }
+        // 市场格子
+        else if (tile.tileData != null && tile.tileData.type == "market")
+        {
+            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $500";
+        }
+        // 海盗格子
+        else if (tile.tileData != null && tile.tileData.type == "pirate")
+        {
+            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，失去 $500";
+        }
+        // 村民格子
+        else if (tile.tileData != null && tile.tileData.type == "villager")
+        {
+            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $300";
+        }
+        // 资源格子
+        else if (tile.tileData != null && tile.tileData.type == "resource")
+        {
+            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $200";
+        }
+        else 
         {
             eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData?.name ?? "空白"} 格子";
         }

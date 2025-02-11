@@ -16,8 +16,9 @@ public class GameManager : MonoBehaviour
 
     public List<TileController> boardTiles = new List<TileController>();
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return null;
         SetupGame(); // 初始化游戏
     }
 
@@ -29,8 +30,14 @@ public class GameManager : MonoBehaviour
         tileEventManager.gameManager = this;
         tileEventManager.playerManager = playerManager;
 
+        // 将 TileEventManager 引用传递给所有 TileController
+        foreach (var tile in boardTiles)
+        {
+            tile.tileEventManager = tileEventManager;  // 设置引用
+        }
+
         UpdateInfoText();
-        
+
 
         // 新增：自动测试，模拟玩家1购买并升级指定城市
         StartCoroutine(tileEventManager.AutoBuyAndUpgradeCity(0, 1)); // 假设 0 是玩家1，1 是城市的 tileIndex
@@ -50,7 +57,7 @@ public class GameManager : MonoBehaviour
         infoText.text = $"{currentPlayer.name} 掷出了 {diceRoll} 点";
         yield return new WaitForSeconds(1f);
 
-        yield return StartCoroutine(MovePlayer(currentPlayer, diceRoll));
+        yield return StartCoroutine(playerManager.MovePlayer(currentPlayer, diceRoll));
         yield return StartCoroutine(tileEventManager.ProcessTileEvent(currentPlayer, currentPlayer.currentTileIndex));
 
         playerManager.SwitchPlayer(); // 切换玩家
@@ -60,20 +67,6 @@ public class GameManager : MonoBehaviour
 
     private int RollDice() => Random.Range(1, 7) + Random.Range(1, 7);
 
-    private IEnumerator MovePlayer(Player player, int steps)
-    {
-        for (int i = 0; i < steps; i++)
-        {
-            player.currentTileIndex = (player.currentTileIndex + 1) % mapManager.tilePositions.Count;
-            Vector3 targetPos = mapManager.tilePositions[player.currentTileIndex];
-            while (Vector3.Distance(player.avatar.transform.position, targetPos) > 0.1f)
-            {
-                player.avatar.transform.position = Vector3.MoveTowards(player.avatar.transform.position, targetPos, Time.deltaTime * 5f);
-                yield return null;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
 
     private void UpdateInfoText()
     {
