@@ -28,7 +28,7 @@ public class PlayerManager : MonoBehaviour
         Player newPlayer = new Player
         {
             name = "Player " + (index + 1),
-            money = 1500,
+            money = 15000,
             currentTileIndex = 0,
             playerColor = (index == 0) ? Color.red : Color.green
         };

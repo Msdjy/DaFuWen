@@ -15,215 +15,255 @@
   "rows": 11,
   "columns": 11,
   "tiles": [
-      {
-        "id": 1,
-        "name": "开始（经过奖励800金）",
-        "price": 0,
-        "rent": 0,
-        "owner": -1,
-        "level": 0,
-        "desc": "经过起点奖励800金。",
-        "type": "start"
-      },
-      {
-        "id": 2,
-        "name": "长安",
-        "price": 800,
-        "rent": 80,
-        "owner": -1,
-        "level": 0,
-        "desc": "中国古都，辉煌历史。",
-        "type": "city"
-      },
-      {
-        "id": 3,
-        "name": "洛阳",
-        "price": 800,
-        "rent": 80,
-        "owner": -1,
-        "level": 0,
-        "desc": "古都洛阳，文化底蕴深厚。",
-        "type": "city"
-      },
-      {
-        "id": 4,
-        "name": "威武",
-        "price": 600,
-        "rent": 60,
-        "owner": -1,
-        "level": 0,
-        "desc": "西域重镇，历史悠久。",
-        "type": "city"
-      },
-      {
-        "id": 5,
-        "name": "张掖",
-        "price": 550,
-        "rent": 55,
-        "owner": -1,
-        "level": 0,
-        "desc": "以丝绸之路著称。",
-        "type": "city"
-      },
-      {
-        "id": 6,
-        "name": "事件格（抽取事件牌）",
-        "price": 0,
-        "rent": 0,
-        "owner": -1,
-        "level": 0,
-        "desc": "抽取事件牌，随机触发事件。",
-        "type": "event"
-      },
-      {
-        "id": 7,
-        "name": "敦煌",
-        "price": 800,
-        "rent": 80,
-        "owner": -1,
-        "level": 0,
-        "desc": "莫高窟所在地，文化宝库。",
-        "type": "city"
-      },
-      {
-        "id": 8,
-        "name": "楼兰",
-        "price": 400,
-        "rent": 40,
-        "owner": -1,
-        "level": 0,
-        "desc": "神秘古国遗址。",
-        "type": "city"
-      },
-      {
-        "id": 9,
-        "name": "吐鲁番",
-        "price": 450,
-        "rent": 45,
-        "owner": -1,
-        "level": 0,
-        "desc": "新疆著名的葡萄产区。",
-        "type": "city"
-      },
-      {
-        "id": 10,
-        "name": "哈密",
-        "price": 500,
-        "rent": 50,
-        "owner": -1,
-        "level": 0,
-        "desc": "以哈密瓜闻名的城市。",
-        "type": "city"
-      },
-      {
-        "id": 11,
-        "name": "遇到海盗，停一轮",
-        "price": 0,
-        "rent": 0,
-        "owner": -1,
-        "level": 0,
-        "desc": "遭遇海盗，下一轮暂停。",
-        "type": "event"
-      },
-      {
-        "id": 12,
-        "name": "撒马尔罕",
-        "price": 650,
-        "rent": 65,
-        "owner": -1,
-        "level": 0,
-        "desc": "中亚古城，历史悠久。",
-        "type": "city"
-      },
-      {
-        "id": 13,
-        "name": "布哈拉",
-        "price": 900,
-        "rent": 90,
-        "owner": -1,
-        "level": 0,
-        "desc": "丝绸之路重要节点。",
-        "type": "city"
-      },
-      {
-        "id": 14,
-        "name": "喀什干",
-        "price": 600,
-        "rent": 60,
-        "owner": -1,
-        "level": 0,
-        "desc": "古丝路重镇。",
-        "type": "city"
-      },
-      {
-        "id": 15,
-        "name": "费尔干纳",
-        "price": 550,
-        "rent": 55,
-        "owner": -1,
-        "level": 0,
-        "desc": "著名的农业产区。",
-        "type": "city"
-      },
-      {
-        "id": 16,
-        "name": "交易市场（购买资源卡）",
-        "price": 0,
-        "rent": 0,
-        "owner": -1,
-        "level": 0,
-        "desc": "在此可购买资源卡。",
-        "type": "event"
-      },
-      {
-        "id": 17,
-        "name": "巴格达",
-        "price": 700,
-        "rent": 70,
-        "owner": -1,
-        "level": 0,
-        "desc": "中东古都，商业繁荣。",
-        "type": "city"
-      },
-      {
-        "id": 18,
-        "name": "大马士革",
-        "price": 650,
-        "rent": 65,
-        "owner": -1,
-        "level": 0,
-        "desc": "古老而迷人的城市。",
-        "type": "city"
-      },
-      {
-        "id": 19,
-        "name": "伊斯法罕",
-        "price": 750,
-        "rent": 75,
-        "owner": -1,
-        "level": 0,
-        "desc": "波斯文化瑰宝。",
-        "type": "city"
-      },
-      {
-        "id": 20,
-        "name": "设拉子",
-        "price": 550,
-        "rent": 55,
-        "owner": -1,
-        "level": 0,
-        "desc": "以诗歌和葡萄酒闻名。",
-        "type": "city"
-      },
-      {
-        "id": 21,
-        "name": "当地居民招待你，获得300金",
-        "price": 0,
-        "rent": 0,
-        "owner": -1,
-        "level": 0,
-        "desc": "当地居民热情招待，获得300金。",
-        "type": "event"
+    {
+      "id": 1,
+      "name": "开始（经过奖励800金）",
+      "price": 0,
+      "rent": 0,
+      "owner": -1,
+      "level": 0,
+      "desc": "经过起点奖励800金。",
+      "type": "start",
+      "upgradeCosts": [0, 0, 0],
+      "upgradeRents": [0, 0, 0]
+    },
+    {
+      "id": 2,
+      "name": "长安",
+      "price": 800,
+      "rent": 80,
+      "owner": -1,
+      "level": 0,
+      "desc": "中国古都，辉煌历史。",
+      "type": "city",
+      "upgradeCosts": [200, 300, 400],
+      "upgradeRents": [100, 150, 200]
+    },
+    {
+      "id": 3,
+      "name": "洛阳",
+      "price": 800,
+      "rent": 80,
+      "owner": -1,
+      "level": 0,
+      "desc": "古都洛阳，文化底蕴深厚。",
+      "type": "city",
+      "upgradeCosts": [200, 300, 400],
+      "upgradeRents": [100, 150, 200]
+    },
+    {
+      "id": 4,
+      "name": "威武",
+      "price": 600,
+      "rent": 60,
+      "owner": -1,
+      "level": 0,
+      "desc": "西域重镇，历史悠久。",
+      "type": "city",
+      "upgradeCosts": [150, 250, 350],
+      "upgradeRents": [80, 120, 160]
+    },
+    {
+      "id": 5,
+      "name": "张掖",
+      "price": 550,
+      "rent": 55,
+      "owner": -1,
+      "level": 0,
+      "desc": "以丝绸之路著称。",
+      "type": "city",
+      "upgradeCosts": [140, 230, 320],
+      "upgradeRents": [75, 110, 150]
+    },
+    {
+      "id": 6,
+      "name": "事件格（抽取事件牌）",
+      "price": 0,
+      "rent": 0,
+      "owner": -1,
+      "level": 0,
+      "desc": "抽取事件牌，随机触发事件。",
+      "type": "event",
+      "upgradeCosts": [0, 0, 0],
+      "upgradeRents": [0, 0, 0]
+    },
+    {
+      "id": 7,
+      "name": "敦煌",
+      "price": 800,
+      "rent": 80,
+      "owner": -1,
+      "level": 0,
+      "desc": "莫高窟所在地，文化宝库。",
+      "type": "city",
+      "upgradeCosts": [200, 300, 400],
+      "upgradeRents": [100, 150, 200]
+    },
+    {
+      "id": 8,
+      "name": "楼兰",
+      "price": 400,
+      "rent": 40,
+      "owner": -1,
+      "level": 0,
+      "desc": "神秘古国遗址。",
+      "type": "city",
+      "upgradeCosts": [100, 150, 200],
+      "upgradeRents": [60, 90, 120]
+    },
+    {
+      "id": 9,
+      "name": "吐鲁番",
+      "price": 450,
+      "rent": 45,
+      "owner": -1,
+      "level": 0,
+      "desc": "新疆著名的葡萄产区。",
+      "type": "city",
+      "upgradeCosts": [120, 170, 220],
+      "upgradeRents": [65, 95, 125]
+    },
+    {
+      "id": 10,
+      "name": "哈密",
+      "price": 500,
+      "rent": 50,
+      "owner": -1,
+      "level": 0,
+      "desc": "以哈密瓜闻名的城市。",
+      "type": "city",
+      "upgradeCosts": [130, 180, 230],
+      "upgradeRents": [70, 100, 130]
+    },
+    {
+      "id": 11,
+      "name": "遇到海盗，停一轮",
+      "price": 0,
+      "rent": 0,
+      "owner": -1,
+      "level": 0,
+      "desc": "遭遇海盗，下一轮暂停。",
+      "type": "event",
+      "upgradeCosts": [0, 0, 0],
+      "upgradeRents": [0, 0, 0]
+    },
+    {
+      "id": 12,
+      "name": "撒马尔罕",
+      "price": 650,
+      "rent": 65,
+      "owner": -1,
+      "level": 0,
+      "desc": "中亚古城，历史悠久。",
+      "type": "city",
+      "upgradeCosts": [160, 250, 340],
+      "upgradeRents": [85, 125, 165]
+    },
+    {
+      "id": 13,
+      "name": "布哈拉",
+      "price": 900,
+      "rent": 90,
+      "owner": -1,
+      "level": 0,
+      "desc": "丝绸之路重要节点。",
+      "type": "city",
+      "upgradeCosts": [220, 330, 440],
+      "upgradeRents": [110, 160, 210]
+    },
+    {
+      "id": 14,
+      "name": "喀什干",
+      "price": 600,
+      "rent": 60,
+      "owner": -1,
+      "level": 0,
+      "desc": "古丝路重镇。",
+      "type": "city",
+      "upgradeCosts": [150, 240, 330],
+      "upgradeRents": [80, 120, 160]
+    },
+    {
+      "id": 15,
+      "name": "费尔干纳",
+      "price": 550,
+      "rent": 55,
+      "owner": -1,
+      "level": 0,
+      "desc": "著名的农业产区。",
+      "type": "city",
+      "upgradeCosts": [140, 220, 300],
+      "upgradeRents": [75, 110, 145]
+    },
+    {
+      "id": 16,
+      "name": "交易市场（购买资源卡）",
+      "price": 0,
+      "rent": 0,
+      "owner": -1,
+      "level": 0,
+      "desc": "在此可购买资源卡。",
+      "type": "event",
+      "upgradeCosts": [0, 0, 0],
+      "upgradeRents": [0, 0, 0]
+    },
+    {
+      "id": 17,
+      "name": "巴格达",
+      "price": 700,
+      "rent": 70,
+      "owner": -1,
+      "level": 0,
+      "desc": "中东古都，商业繁荣。",
+      "type": "city",
+      "upgradeCosts": [180, 270, 360],
+      "upgradeRents": [95, 140, 185]
+    },
+    {
+      "id": 18,
+      "name": "大马士革",
+      "price": 650,
+      "rent": 65,
+      "owner": -1,
+      "level": 0,
+      "desc": "古老而迷人的城市。",
+      "type": "city",
+      "upgradeCosts": [160, 240, 320],
+      "upgradeRents": [85, 125, 165]
+    },
+    {
+      "id": 19,
+      "name": "伊斯法罕",
+      "price": 750,
+      "rent": 75,
+      "owner": -1,
+      "level": 0,
+      "desc": "波斯文化瑰宝。",
+      "type": "city",
+      "upgradeCosts": [190, 280, 370],
+      "upgradeRents": [100, 150, 200]
+    },
+    {
+      "id": 20,
+      "name": "设拉子",
+      "price": 550,
+      "rent": 55,
+      "owner": -1,
+      "level": 0,
+      "desc": "以诗歌和葡萄酒闻名。",
+      "type": "city",
+      "upgradeCosts": [140, 210, 290],
+      "upgradeRents": [75, 110, 145]
+    },
+    {
+      "id": 21,
+      "name": "当地居民招待你，获得300金",
+      "price": 0,
+      "rent": 0,
+      "owner": -1,
+      "level": 0,
+      "desc": "当地居民热情招待，获得300金。",
+      "type": "event"
       },
       {
         "id": 22,
@@ -233,7 +273,9 @@
         "owner": -1,
         "level": 0,
         "desc": "古城阿勒颇，历史悠久。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 23,
@@ -243,7 +285,9 @@
         "owner": -1,
         "level": 0,
         "desc": "充满历史气息的摩苏尔。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 24,
@@ -253,7 +297,9 @@
         "owner": -1,
         "level": 0,
         "desc": "宗教圣地，历史悠久。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 25,
@@ -263,7 +309,9 @@
         "owner": -1,
         "level": 0,
         "desc": "伊斯兰圣地，每年吸引大量朝圣者。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 26,
@@ -273,7 +321,9 @@
         "owner": -1,
         "level": 0,
         "desc": "抽取事件牌，随机触发事件。",
-        "type": "event"
+        "type": "event",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 27,
@@ -283,7 +333,9 @@
         "owner": -1,
         "level": 0,
         "desc": "另一重要伊斯兰城市。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 28,
@@ -293,7 +345,9 @@
         "owner": -1,
         "level": 0,
         "desc": "历史悠久的贸易城市。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 29,
@@ -303,7 +357,9 @@
         "owner": -1,
         "level": 0,
         "desc": "西方古都，文化灿烂。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 30,
@@ -313,7 +369,9 @@
         "owner": -1,
         "level": 0,
         "desc": "东西方交汇的传奇之城。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 31,
@@ -323,7 +381,9 @@
         "owner": -1,
         "level": 0,
         "desc": "抽取一张珍贵资源卡。",
-        "type": "event"
+        "type": "event",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },  
       {
         "id": 32,
@@ -333,7 +393,9 @@
         "owner": -1,
         "level": 0,
         "desc": "古希腊文明的摇篮。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 33,
@@ -343,7 +405,9 @@
         "owner": -1,
         "level": 0,
         "desc": "埃及的历史名城，充满智慧。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 34,
@@ -353,7 +417,9 @@
         "owner": -1,
         "level": 0,
         "desc": "水城威尼斯，浪漫之都。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 35,
@@ -363,7 +429,9 @@
         "owner": -1,
         "level": 0,
         "desc": "文艺复兴的发源地。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 36,
@@ -373,7 +441,9 @@
         "owner": -1,
         "level": 0,
         "desc": "在此可购买资源卡。",
-        "type": "event"
+        "type": "event",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 37,
@@ -383,7 +453,9 @@
         "owner": -1,
         "level": 0,
         "desc": "意大利重要港口。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 38,
@@ -393,7 +465,9 @@
         "owner": -1,
         "level": 0,
         "desc": "法国重要港口城市。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 39,
@@ -403,7 +477,9 @@
         "owner": -1,
         "level": 0,
         "desc": "英国金融中心。",
-        "type": "city"
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
       },
       {
         "id": 40,
@@ -413,7 +489,9 @@
         "owner": -1,
         "level": 0,
         "desc": "浪漫之都，艺术之城。",
-        "type": "city"
-      }
-    ]
+        "type": "city",
+        "upgradeCosts": [140, 210, 290],
+        "upgradeRents": [75, 110, 145]
+    }
+  ]
 }
