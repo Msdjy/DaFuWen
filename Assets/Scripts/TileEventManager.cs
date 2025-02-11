@@ -15,6 +15,10 @@ public class TileEventManager : MonoBehaviour
     [Tooltip("TextMeshPro 字体文件")]
     public TMP_FontAsset customFont;
 
+    public GameObject cityLevel1Prefab;
+    public GameObject cityLevel2Prefab;
+    public GameObject cityLevel3Prefab;
+
     private bool decisionMade;
     private bool buyDecision;
 
@@ -25,7 +29,98 @@ public class TileEventManager : MonoBehaviour
         skipButton.onClick.AddListener(OnSkipButtonClicked);
         // 清空 eventInfoText
         eventInfoText.text = "";
+
     }
+
+    // 自动购买并升级指定城市
+    public IEnumerator AutoBuyAndUpgradeCity(int playerIndex, int tileIndex)
+    {
+        Player player = playerManager.players[playerIndex];
+        int tileID = gameManager.mapManager.tileIds[tileIndex];
+        TileController tile = gameManager.boardTiles.Find(t => t.tileIndex == tileID);
+
+        if (tile == null)
+            yield break;
+
+        // 自动购买城市
+        if (tile.owner < 0 && player.money >= tile.tileData.price)
+        {
+            tile.owner = playerIndex;
+            player.money -= tile.tileData.price;
+            tile.UpdateTileText();
+            eventInfoText.text = $"{player.name} 自动购买了 {tile.tileData.name}";
+
+            MeshRenderer cubeRenderer = tile.GetComponentInChildren<MeshRenderer>();
+            if (cubeRenderer != null)
+            {
+                cubeRenderer.material.color = player.playerColor;
+            }
+
+            // 自动升级城市
+            for (int i = 0; i < 3; i++)
+            {
+                if (player.money >= tile.tileData.upgradeCosts[tile.tileData.level])
+                {
+                    tile.UpgradeCity(player); // 升级城市
+                    UpdateCityModel(tile); // 更新预制体模型
+                    yield return new WaitForSeconds(1); // 延迟1秒后继续升级
+                }
+                else
+                {
+                    break; // 如果资金不足，停止升级
+                }
+            }
+        }
+        else
+        {
+            eventInfoText.text = $"{player.name} 无法购买 {tile.tileData.name}，资金不足或该城市已经被购买";
+        }
+    }
+
+    // 根据等级更新城市模型
+    public void UpdateCityModel(TileController tile)
+    {
+        // 销毁现有的模型（如果存在） - 获取第三个子节点并销毁
+        if (tile.transform.childCount > 2) // 确保存在至少三个子节点
+        {
+            // 销毁第三个子节点，即城市模型
+            Destroy(tile.transform.GetChild(2).gameObject);
+        }
+
+        GameObject cityModel = null;
+
+        // 根据等级选择相应的预制体
+        switch (tile.tileData.level)
+        {
+            case 1:
+                cityModel = Instantiate(cityLevel1Prefab, tile.transform.position, Quaternion.identity, tile.transform);
+                break;
+            case 2:
+                cityModel = Instantiate(cityLevel2Prefab, tile.transform.position, Quaternion.identity, tile.transform);
+                break;
+            case 3:
+                cityModel = Instantiate(cityLevel3Prefab, tile.transform.position, Quaternion.identity, tile.transform);
+                break;
+        }
+
+        // 如果生成了模型，设置其缩放比例
+        if (cityModel != null)
+        {
+            cityModel.transform.localScale = new Vector3(0.06f, 0.30f, 0.06f); // 设置缩放比例
+
+            // 获取模型的 MeshRenderer 组件并设置颜色
+            MeshRenderer renderer = cityModel.GetComponentInChildren<MeshRenderer>();
+            if (renderer != null)
+            {
+                // 这里设置模型的颜色，可以替换为任何颜色
+                renderer.material.color = tile.owner == -1 ? Color.gray : playerManager.players[tile.owner].playerColor;
+            }
+        }
+
+        // 显示等级信息
+        Debug.Log($"{tile.tileData.name} 等级：{tile.tileData.level}");
+    }
+
 
     public IEnumerator ProcessTileEvent(Player player, int tileIndex)
     {

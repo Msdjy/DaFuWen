@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     public MapManager mapManager;
     public PlayerManager playerManager;
     public TileEventManager tileEventManager;
-    public GameObject playerPrefab;
     public Text infoText;
     public Button rollDiceButton;
 
@@ -35,7 +34,13 @@ public class GameManager : MonoBehaviour
         tileEventManager.gameManager = this;
         tileEventManager.playerManager = playerManager;
 
+
         UpdateInfoText();
+
+
+        // 新增：自动测试，模拟玩家1购买并升级指定城市
+        StartCoroutine(tileEventManager.AutoBuyAndUpgradeCity(0, 1)); // 假设 0 是玩家1，1 是城市的 tileIndex
+
     }
 
     List<TileController> GetSortedTileControllers()

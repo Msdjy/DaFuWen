@@ -24,18 +24,12 @@ public class TileController : MonoBehaviour
     // 升级城市的方法
     public void UpgradeCity(Player player)
     {
-        if (tileData.level < 3 && player.money >= tileData.upgradeCosts[tileData.level])
-        {
-            player.money -= tileData.upgradeCosts[tileData.level]; // 扣除当前等级的升级费用
-            tileData.level++;  // 提升城市的等级
-            tileData.rent += tileData.upgradeRents[tileData.level - 1]; // 增加租金
-            UpdateTileText(); // 更新城市显示（显示等级和租金）
-            Debug.Log($"{player.name} 升级了 {tileData.name} 到等级 {tileData.level}，当前租金：${tileData.rent}");
-        }
-        else
-        {
-            Debug.Log($"{player.name} 无法升级 {tileData.name}。资金不足或已达到最大等级");
-        }
-    }
+        player.money -= tileData.upgradeCosts[tileData.level]; // 扣除当前等级的升级费用
+        tileData.level++;  // 升级城市
+        tileData.rent += tileData.upgradeRents[tileData.level - 1];  // 增加租金收益
+        UpdateTileText();  // 更新城市的状态显示
 
+        Debug.Log($"{player.name} 升级了 {tileData.name}，当前租金：${tileData.rent}");
+
+    }
 }
