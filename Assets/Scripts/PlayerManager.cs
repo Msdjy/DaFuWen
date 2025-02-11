@@ -12,22 +12,20 @@ public class PlayerManager : MonoBehaviour
 
     public Text leftPlayerInfoText;
     public Text rightPlayerInfoText;
-    public Text infoText;
 
     public void CreatePlayers()
     {
         for (int i = 0; i < 2; i++)
         {
-            Player newPlayer = CreatePlayer(i);
-            players.Add(newPlayer);
+            players.Add(CreatePlayer(i));
         }
     }
 
-    public Player CreatePlayer(int index)
+    private Player CreatePlayer(int index)
     {
         Player newPlayer = new Player
         {
-            name = "Player " + (index + 1),
+            name = $"Player {index + 1}",
             money = 15000,
             currentTileIndex = 0,
             playerColor = (index == 0) ? Color.red : Color.green
@@ -69,8 +67,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    // TODO 目前没用
-    void CreatePlayerText(GameObject avatar, Player player)
+    private void CreatePlayerText(GameObject avatar, Player player)
     {
         GameObject textObj = new GameObject("PlayerInfo");
         textObj.transform.SetParent(avatar.transform);

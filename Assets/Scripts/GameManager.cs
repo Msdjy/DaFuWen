@@ -14,41 +14,35 @@ public class GameManager : MonoBehaviour
     public Text infoText;
     public Button rollDiceButton;
 
-
-
     public List<TileController> boardTiles = new List<TileController>();
 
-    IEnumerator Start()
+    void Start()
     {
-        yield return null;
+        SetupGame(); // 初始化游戏
+    }
+
+    private void SetupGame()
+    {
         boardTiles = GetSortedTileControllers();
-        if (boardTiles.Count == 0)
-        {
-            Debug.LogError("未在地图上找到任何 Tile，请检查 MapManager 是否正常生成！");
-            yield break;
-        }
-
         rollDiceButton.onClick.AddListener(() => StartCoroutine(TakeTurn()));
-
         playerManager.CreatePlayers();
         tileEventManager.gameManager = this;
         tileEventManager.playerManager = playerManager;
 
-
         UpdateInfoText();
-
+        
 
         // 新增：自动测试，模拟玩家1购买并升级指定城市
         StartCoroutine(tileEventManager.AutoBuyAndUpgradeCity(0, 1)); // 假设 0 是玩家1，1 是城市的 tileIndex
 
     }
 
-    List<TileController> GetSortedTileControllers()
+    private List<TileController> GetSortedTileControllers()
     {
         return FindObjectsOfType<TileController>().OrderBy(t => t.tileIndex).ToList();
     }
 
-    IEnumerator TakeTurn()
+    private IEnumerator TakeTurn()
     {
         rollDiceButton.interactable = false;
         Player currentPlayer = playerManager.players[playerManager.currentPlayerIndex];
@@ -57,30 +51,16 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         yield return StartCoroutine(MovePlayer(currentPlayer, diceRoll));
-
         yield return StartCoroutine(tileEventManager.ProcessTileEvent(currentPlayer, currentPlayer.currentTileIndex));
 
-        playerManager.SwitchPlayer();
-        
+        playerManager.SwitchPlayer(); // 切换玩家
         UpdateInfoText();
         rollDiceButton.interactable = true;
     }
 
-    int RollDice()
-    {
-        return Random.Range(1, 7) + Random.Range(1, 7);
-    }
+    private int RollDice() => Random.Range(1, 7) + Random.Range(1, 7);
 
-    public void UpdateInfoText()
-    {
-        string info = $"当前回合: {playerManager.players[playerManager.currentPlayerIndex].name}\n";
-        infoText.text = info;
-
-        playerManager.UpdatePlayerInfoText();
-    }
-    
-
-    IEnumerator MovePlayer(Player player, int steps)
+    private IEnumerator MovePlayer(Player player, int steps)
     {
         for (int i = 0; i < steps; i++)
         {
@@ -93,5 +73,12 @@ public class GameManager : MonoBehaviour
             }
             yield return new WaitForSeconds(0.1f);
         }
+    }
+
+    private void UpdateInfoText()
+    {
+        string info = $"当前回合: {playerManager.players[playerManager.currentPlayerIndex].name}\n";
+        infoText.text = info;
+        playerManager.UpdatePlayerInfoText();
     }
 }
