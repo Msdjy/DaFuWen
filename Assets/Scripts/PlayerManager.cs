@@ -32,6 +32,7 @@ public class PlayerManager : MonoBehaviour
             currentTileIndex = 0,
             playerColor = (index == 0) ? Color.red : Color.green
         };
+        newPlayer.initializeResources();
 
         Vector3 startPos = GetTilePosition(newPlayer.currentTileIndex);
         GameObject avatar = Instantiate(playerPrefab, startPos, Quaternion.identity);
@@ -99,13 +100,36 @@ public class PlayerManager : MonoBehaviour
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.color = player.playerColor;
 
+        // 生成玩家信息文本
+        tmp.text = GeneratePlayerInfoText(player);
         player.playerText = tmp;
     }
 
+    private string GeneratePlayerInfoText(Player player)
+    {
+        if (player.playerResources == null)
+        {
+            Debug.LogError("Player's resources are not initialized!");
+            return $"{player.name}\nMoney: ${player.money}";
+        }
+
+        string playerInfo = $"{player.name}\nMoney: ${player.money}\n";
+
+        // 添加资源信息
+        foreach (var resource in player.playerResources)
+        {
+            playerInfo += $"{resource.Key}: {resource.Value.Count}\n";
+        }
+
+        return playerInfo;
+    }
+
+
     public void UpdatePlayerInfoText()
     {
-        leftPlayerInfoText.text = $"{players[0].name}\nMoney: ${players[0].money}";
-        rightPlayerInfoText.text = $"{players[1].name}\nMoney: ${players[1].money}";
+        // 更新左右玩家的资源信息
+        leftPlayerInfoText.text = GeneratePlayerInfoText(players[0]);
+        rightPlayerInfoText.text = GeneratePlayerInfoText(players[1]);
 
         leftPlayerInfoText.color = players[0].playerColor;
         rightPlayerInfoText.color = players[1].playerColor;

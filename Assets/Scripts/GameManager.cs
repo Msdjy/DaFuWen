@@ -41,6 +41,10 @@ public class GameManager : MonoBehaviour
 
         // 新增：自动测试，模拟玩家1购买并升级指定城市
         StartCoroutine(tileEventManager.AutoBuyAndUpgradeCity(0, 1)); // 假设 0 是玩家1，1 是城市的 tileIndex
+        // DisplayResources
+        // AutoAddResourceCard
+        // StartCoroutine(tileEventManager.AutoAddResourceCard(0, ResourceType.Silk, 5)); // 假设 0 是玩家1，2 是资源点的 tileIndex
+        
 
     }
 
