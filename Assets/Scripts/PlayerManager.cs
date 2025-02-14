@@ -44,13 +44,8 @@ public class PlayerManager : MonoBehaviour
         return newPlayer;
     }
 
-    // 获取当前玩家
-    public Player GetCurrentPlayer()
-    {
-        return players[currentPlayerIndex];
-    }
+    public Player GetCurrentPlayer() => players[currentPlayerIndex];
 
-    // 添加 MovePlayer 方法
     public IEnumerator MovePlayer(Player player, int steps)
     {
         for (int i = 0; i < steps; i++)
@@ -66,24 +61,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    // Vector3 GetTilePosition(int tileIndex)
-    // {
-    //     if (mapManager == null || mapManager.tilePositions == null || mapManager.tilePositions.Count == 0)
-    //     {
-    //         Debug.LogError("MapManager 引用或 tilePositions 未初始化！");
-    //         return Vector3.zero;
-    //     }
-
-    //     if (tileIndex < 0 || tileIndex >= mapManager.tilePositions.Count)
-    //     {
-    //         Debug.LogError($"Tile index {tileIndex} 超出范围！");
-    //         return mapManager.tilePositions[0];
-    //     }
-
-    //     return mapManager.tilePositions[tileIndex];
-    // }
-
-    void SetAvatarColor(GameObject avatar, Player player)
+    private void SetAvatarColor(GameObject avatar, Player player)
     {
         MeshRenderer avatarRenderer = avatar.GetComponentInChildren<MeshRenderer>();
         if (avatarRenderer != null)
@@ -123,7 +101,6 @@ public class PlayerManager : MonoBehaviour
 
         return playerInfo;
     }
-
 
     public void UpdatePlayerInfoText()
     {

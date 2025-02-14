@@ -13,8 +13,6 @@ public class TileEventManager : MonoBehaviour
     public Text eventInfoText;
     public Button buyButton;
     public Button skipButton;
-    [Tooltip("TextMeshPro 字体文件")]
-    public TMP_FontAsset customFont;
 
     public GameObject cityLevel1Prefab;
     public GameObject cityLevel2Prefab;
@@ -61,12 +59,12 @@ public class TileEventManager : MonoBehaviour
             {
                 if (player.money >= tile.tileData.upgradeCosts[tile.tileData.level])
                 {
-                    tile.UpgradeCity(player); // 升级城市
-                    yield return new WaitForSeconds(1); // 延迟1秒后继续升级
+                    tile.UpgradeCity(player);
+                    yield return new WaitForSeconds(1);
                 }
                 else
                 {
-                    break; // 如果资金不足，停止升级
+                    break;
                 }
             }
         }
@@ -76,34 +74,22 @@ public class TileEventManager : MonoBehaviour
         }
     }
 
-    // 测试自动添加资源卡
-    public IEnumerator AutoAddResourceCard(int playerIndex, ResourceType resourceType, int quantity)
-    {
-        Player player = playerManager.players[playerIndex];
-        resourceManager.AddResource(player, resourceType, quantity);
-        eventInfoText.text = $"{player.name} 自动添加了 {quantity} 张 {resourceType} 资源卡";
-        yield return null;
-    }
-
-
+    // 处理玩家的回合逻辑
     public IEnumerator ProcessTileEvent(Player player, int tileIndex)
     {
         int tileID = gameManager.mapManager.tileIds[tileIndex];
         TileController tile = gameManager.boardTiles.Find(t => t.tileIndex == tileID);
         if (tile == null)
             yield break;
-        
-        // 城市格子
+
         if (tile.tileData != null && tile.tileData.type == "city")
         {
             if (tile.owner < 0)
             {
-                // 购买
-                yield return StartCoroutine(ShowPurchasePanel(player, tile)); // 如果该城市无人拥有，提供购买选择
+                yield return StartCoroutine(ShowPurchasePanel(player, tile));
             }
             else if (tile.owner != playerManager.currentPlayerIndex)
             {
-                // 租金
                 int rent = tile.tileData.rent;
                 player.money -= rent;
                 playerManager.players[tile.owner].money += rent;
@@ -111,10 +97,8 @@ public class TileEventManager : MonoBehaviour
             }
             else
             {
-                // 如果玩家已经拥有该城市，提供升级选项
                 if (tile.tileData.level < 3)
                 {
-                    // 触发升级逻辑
                     yield return StartCoroutine(ShowUpgradePanel(player, tile));
                 }
                 else
@@ -123,45 +107,47 @@ public class TileEventManager : MonoBehaviour
                 }
             }
         }
-        // 事件格子
         else if (tile.tileData != null && tile.tileData.type == "event")
         {
             eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子";
             yield return StartCoroutine(TriggerEventCard(player));
         }
-        // 开始格子
-        else if (tile.tileData != null && tile.tileData.type == "start")
-        {   
-            // 玩家+800
-            player.money += 800;
-            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $800";
-        }
-        // 市场格子
-        else if (tile.tileData != null && tile.tileData.type == "market")
+        else
         {
-            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $500";
-        }
-        // 海盗格子
-        else if (tile.tileData != null && tile.tileData.type == "pirate")
-        {
-            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，失去 $500";
-        }
-        // 村民格子
-        else if (tile.tileData != null && tile.tileData.type == "villager")
-        {
-            player.money += 300;
-            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $300";
-        }
-        // 资源格子
-        else if (tile.tileData != null && tile.tileData.type == "resource")
-        {
-            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $200";
-        }
-        else 
-        {
-            eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData?.name ?? "空白"} 格子";
+            // 对于其他类型的格子，处理资源、市场等
+            HandleOtherTileTypes(player, tile);
         }
         yield return null;
+    }
+
+    private void HandleOtherTileTypes(Player player, TileController tile)
+    {
+        if (tile.tileData != null)
+        {
+            switch (tile.tileData.type)
+            {
+                case "start":
+                    player.money += 800;
+                    eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $800";
+                    break;
+                case "market":
+                    eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $500";
+                    break;
+                case "pirate":
+                    eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，失去 $500";
+                    break;
+                case "villager":
+                    player.money += 300;
+                    eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $300";
+                    break;
+                case "resource":
+                    eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $200";
+                    break;
+                default:
+                    eventInfoText.text = $"\n{player.name} 落在了 {tile.tileData?.name ?? "空白"} 格子";
+                    break;
+            }
+        }
     }
 
     public IEnumerator ShowUpgradePanel(Player player, TileController tile)
@@ -187,14 +173,8 @@ public class TileEventManager : MonoBehaviour
         purchasePanel.SetActive(false);
     }
 
-
     public IEnumerator ShowPurchasePanel(Player player, TileController tile)
     {
-        // 设置自定义字体（如果已分配）
-        if (customFont != null)
-        {
-            purchasePanelText.font = customFont;
-        }
         purchasePanelText.text = $"{player.name}, 是否购买 {tile.tileData.name}\n价格: ${tile.tileData.price}?";
         decisionMade = false;
         buyDecision = false;
@@ -213,7 +193,7 @@ public class TileEventManager : MonoBehaviour
                 tile.owner = playerManager.currentPlayerIndex;
                 tile.UpdateTileText();
                 eventInfoText.text = $"\n{player.name} 购买了 {tile.tileData.name}";
-                
+
                 MeshRenderer cubeRenderer = tile.GetComponentInChildren<MeshRenderer>();
                 if (cubeRenderer != null)
                 {

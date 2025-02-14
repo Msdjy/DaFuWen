@@ -35,22 +35,16 @@ public class MapManager : MonoBehaviour
     #region Unity Methods
     void Start()
     {
-        if (jsonConfig == null)
+        if (jsonConfig == null || tilePrefab == null)
         {
-            Debug.LogError("未指定 JSON 配置文件！");
-            return;
-        }
-        if (tilePrefab == null)
-        {
-            Debug.LogError("未指定 Tile 预制体！");
+            Debug.LogError("未指定配置文件或 Tile 预制体！");
             return;
         }
 
-        // 解析 JSON 配置文件
         config = JsonUtility.FromJson<MapConfig>(jsonConfig.text);
         if (config == null)
         {
-            Debug.LogError("解析 JSON 配置文件失败！");
+            Debug.LogError("解析配置文件失败！");
             return;
         }
 
@@ -75,18 +69,15 @@ public class MapManager : MonoBehaviour
         {
             return tilePositions[tileIndex];
         }
-        else
-        {
-            Debug.LogError($"Tile index {tileIndex} is out of range.");
-            return Vector3.zero; // 默认返回 (0, 0, 0) 位置
-        }
+        Debug.LogError($"Tile index {tileIndex} is out of range.");
+        return Vector3.zero;
     }
 
     /// <summary>
     /// 生成地图：只生成棋盘边缘的 Tile，
     /// 顺序：从右下角开始，沿边界顺时针遍历（角点只生成一次）。
     /// </summary>
-    void GenerateMap()
+    private void GenerateMap()
     {
         // 1. 底边：从右下角到左下角
         for (int c = config.columns - 1; c >= 0; c--)
@@ -113,7 +104,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-
+    
     #endregion
 
     #region Tile Processing
@@ -127,7 +118,7 @@ public class MapManager : MonoBehaviour
     /// </summary>
     /// <param name="r">行号</param>
     /// <param name="c">列号</param>
-    void ProcessTile(int r, int c)
+    private void ProcessTile(int r, int c)
     {
         int index = r * config.columns + c;
         int tileId = config.map[index];
@@ -154,84 +145,97 @@ public class MapManager : MonoBehaviour
             Debug.LogError($"未找到与 Tile ID {tileId} 对应的 Tile 数据！");
             return;
         }
-        if (tileData != null && (tileData.type != "city"))
-        {
-            Debug.Log("跳过事件格子: " + tileData.name);
-        }
 
         Vector3 outerPosition = GetOuterPosition(r, c);
-        Debug.Log("外圈位置 Y 坐标: " + outerPosition.y);
-
-        // 实例化 Tile 对象
         GameObject tileObj = Instantiate(tilePrefab, outerPosition, Quaternion.identity);
         tileObj.transform.localScale *= 1.44f;
 
         TileController tc = tileObj.AddComponent<TileController>();
         tc.tileData = tileData;
         tc.tileIndex = tileId;
-
-        // 假设 Cube 是 tileObj 的子物体，可以通过 Find 来查找它
-        Transform cubeTransform = tileObj.transform.Find("Cube");  // 这里的 "Cube" 是 Cube 子物体的名字
-        if (cubeTransform != null)
-        {
-            // 获取 Cube 的 MeshRenderer 组件
-            MeshRenderer cubeRenderer = cubeTransform.GetComponent<MeshRenderer>();
-            if (cubeRenderer != null)
-            {
-                // 根据 tile 类型设置颜色
-                Color tileColor = Color.white;
-                if (tileData != null)
-                {
-                    if (tileData.type == "event")
-                    {
-                        tileColor = Color.blue; // 事件格设置为蓝色
-                    }
-                    else if (tileData.type == "start")
-                    {
-                        tileColor = Color.yellow; // 开始格设置为黄色
-                    }
-                    // 市场格子
-                    else if (tileData.type == "market")
-                    {
-                        tileColor = Color.green;
-                    }
-                    // 海盗格子
-                    else if (tileData.type == "pirate")
-                    {
-                        tileColor = Color.black;
-                    }
-                    // 村民格子
-                    else if (tileData.type == "villager")
-                    {
-                        tileColor = Color.cyan;
-                    }
-                    // 资源格子
-                    else if (tileData.type == "resource")
-                    {
-                        tileColor = Color.magenta;
-                    }
-                    else
-                    {
-                        // 其他格子
-                    }
-
-                    // 修改 Cube 的材质颜色
-                    cubeRenderer.material.color = tileColor;
-                }
-            }
-        }
+        UpdateTileColor(tileObj, tileData);
+        CreateTileText(tileObj, tileData, tileId);
 
         Debug.Log("生成 Tile: " + (tileData != null ? tileData.name : tileId.ToString()));
         Debug.Log($"tileData: id={tileData.id}, name={tileData.name}, type={tileData.type}, price={tileData.price}");
 
-        CreateTileText(tileObj, tileData, tileId);
     }
 
-    /// <summary>
-    /// 根据行和列计算基础内圈坐标和法向量。
-    /// 边界采用 -8.5 到 8.5 为固定值（非角则使用插值）。
-    /// </summary>
-    void CalculateBaseInnerAndNormal(int r, int c, out Vector3 baseInner, out Vector3 normal)
+    private void UpdateTileColor(GameObject tileObj, Tile tileData)
+    {
+        MeshRenderer cubeRenderer = tileObj.GetComponentInChildren<MeshRenderer>();
+        if (cubeRenderer != null)
+        {
+            Color tileColor = Color.white;
+            switch (tileData.type)
+            {
+                case "event":
+                    tileColor = Color.blue;
+                    break;
+                case "start":
+                    tileColor = Color.yellow;
+                    break;
+                case "market":
+                    tileColor = Color.green;
+                    break;
+                case "pirate":
+                    tileColor = Color.black;
+                    break;
+                case "villager":
+                    tileColor = Color.cyan;
+                    break;
+                case "resource":
+                    tileColor = Color.magenta;
+                    break;
+            }
+            cubeRenderer.material.color = tileColor;
+        }
+    }
+
+    private void CreateTileText(GameObject tileObj, Tile tileData, int index)
+    {
+        GameObject textObj = new GameObject("TileText");
+        textObj.transform.SetParent(tileObj.transform);
+        textObj.transform.localPosition = new Vector3(0, 1.5f, 0);
+        textObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        textObj.transform.localScale = Vector3.one;
+
+        TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
+        tmp.text = tileData != null ? $"{tileData.name}\nUnowned" : $"Index: {index}\nUnowned";
+        tmp.fontSize = 4;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.black;
+
+        if (customFont != null)
+        {
+            tmp.font = customFont;
+        }
+
+        TileController tc = tileObj.GetComponent<TileController>();
+        if (tc != null)
+        {
+            tc.tileText = tmp;
+            tc.UpdateTileText();
+        }
+    }
+
+    private Vector3 GetInnerPosition(int r, int c)
+    {
+        Vector3 baseInner, normal;
+        CalculateBaseInnerAndNormal(r, c, out baseInner, out normal);
+        float innerOffset = 0.5f;
+        return baseInner + normal * innerOffset;
+    }
+
+    private Vector3 GetOuterPosition(int r, int c)
+    {
+        Vector3 baseInner, normal;
+        CalculateBaseInnerAndNormal(r, c, out baseInner, out normal);
+        float outerOffset = 2.24f;
+        return baseInner + normal * outerOffset;
+    }
+
+    private void CalculateBaseInnerAndNormal(int r, int c, out Vector3 baseInner, out Vector3 normal)
     {
         baseInner = Vector3.zero;
         normal = Vector3.zero;
@@ -288,61 +292,6 @@ public class MapManager : MonoBehaviour
             baseInner.z = Mathf.Lerp(8.5f, -8.5f, (float)r / (config.rows - 1));
             baseInner.y = yOffset;
             normal = new Vector3(1, 0, 0);
-        }
-    }
-
-    /// <summary>
-    /// 计算内圈（逻辑）位置：基础内圈坐标 + normal * innerOffset
-    /// </summary>
-    Vector3 GetInnerPosition(int r, int c)
-    {
-        Vector3 baseInner, normal;
-        CalculateBaseInnerAndNormal(r, c, out baseInner, out normal);
-        float innerOffset = 0.5f;
-        return baseInner + normal * innerOffset;
-    }
-
-    /// <summary>
-    /// 计算外圈（Cube）位置：基础内圈坐标 + normal * outerOffset
-    /// </summary>
-    Vector3 GetOuterPosition(int r, int c)
-    {
-        Vector3 baseInner, normal;
-        CalculateBaseInnerAndNormal(r, c, out baseInner, out normal);
-        float outerOffset = 2.24f;
-        return baseInner + normal * outerOffset;
-    }
-    #endregion
-
-    #region UI 方法
-    /// <summary>
-    /// 在 Cube 上添加 TextMeshPro 子物体，用于显示 Tile 的名称和状态（例如 Unowned）
-    /// </summary>
-    void CreateTileText(GameObject tileObj, Tile tileData, int index)
-    {
-        GameObject textObj = new GameObject("TileText");
-        textObj.transform.SetParent(tileObj.transform);
-        textObj.transform.localPosition = new Vector3(0, 1.5f, 0);
-        textObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
-        textObj.transform.localScale = Vector3.one;
-
-        TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
-        tmp.text = tileData != null ? $"{tileData.name}\nUnowned" : $"Index: {index}\nUnowned";
-        tmp.fontSize = 4;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.black;
-
-        // 设置自定义字体（如果已分配）
-        if (customFont != null)
-        {
-            tmp.font = customFont;
-        }
-
-        TileController tc = tileObj.GetComponent<TileController>();
-        if (tc != null)
-        {
-            tc.tileText = tmp;
-            tc.UpdateTileText();
         }
     }
     #endregion
