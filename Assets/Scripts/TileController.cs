@@ -11,12 +11,39 @@ public class TileController : MonoBehaviour
     [HideInInspector]
     public TileEventManager tileEventManager;  // 引用 TileEventManager
 
-    // 更新 Tile 显示的文字信息（例如名称及拥有者）
+    // 设定 Tile 的 Text 信息
     public void UpdateTileText()
     {
-        string ownerStr = owner < 0 ? "Unowned" : $"Player {owner + 1}";
-        string tileInfo = tileData != null ? $"{tileData.name}\n{ownerStr}\n{tileData.level}\n{tileIndex}" : $"Index: {tileIndex}\n{ownerStr}";
-        tileText.text = tileInfo;
+        string ownerStr = tileData.owner < 0 ? "Unowned" : $"Player {tileData.owner + 1}";
+        tileText.text = $"{tileData.name}\n{ownerStr}\nLevel {tileData.level}";
+    }
+
+    // 处理 Tile 的购买和升级
+    public void ProcessTileEvent(Player player)
+    {
+        if (tileData.CanPurchase() && player.money >= tileData.price)
+        {
+            PurchaseTile(player);
+        }
+        else if (tileData.CanUpgrade() && player.money >= tileData.upgradeCosts[tileData.level])
+        {
+            UpgradeTile(player);
+        }
+    }
+
+    private void PurchaseTile(Player player)
+    {
+        tileData.owner = player.playerIndex;
+        player.money -= tileData.price;
+        UpdateTileText();
+    }
+
+    private void UpgradeTile(Player player)
+    {
+        player.money -= tileData.upgradeCosts[tileData.level];
+        tileData.level++;
+        tileData.rent += tileData.upgradeRents[tileData.level - 1];
+        UpdateTileText();
     }
 
     // 升级城市

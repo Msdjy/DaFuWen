@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class Player
 {
@@ -17,28 +18,62 @@ public class Player
     /// </summary>
     public TextMeshProUGUI playerText;
 
+    public int playerIndex;
+    public Dictionary<ResourceType, List<ResourceCard>> resources;
+
     // 新增的字段：玩家的颜色
     public Color playerColor;
 
     // 每个玩家的资源
-    public Dictionary<ResourceType, List<ResourceCard>> playerResources;
+    // public Dictionary<ResourceType, List<ResourceCard>> playerResources;
 
-    public void initializeResources()
+
+    // 初始化资源
+    public void InitializeResources()
     {
-        playerResources = new Dictionary<ResourceType, List<ResourceCard>>();
-        // 初始化每种资源
-        // 初始化每种资源类型
-        foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType)))
+        resources = new Dictionary<ResourceType, List<ResourceCard>>();
+        foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
         {
-            playerResources[type] = new List<ResourceCard>();
-
-            // 例如，给玩家添加一些资源
-            if (type == ResourceType.Silk)
-                playerResources[type].Add(new ResourceCard(type, 5 ));
-            else if (type == ResourceType.Gems)
-                playerResources[type].Add(new ResourceCard(type, 5 ));
-            else if (type == ResourceType.Tea)
-                playerResources[type].Add(new ResourceCard(type, 5 ));
+            resources[type] = new List<ResourceCard>();
         }
+    }
+
+    // public void initializeResources()
+    // {
+    //     playerResources = new Dictionary<ResourceType, List<ResourceCard>>();
+    //     // 初始化每种资源
+    //     // 初始化每种资源类型
+    //     foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType)))
+    //     {
+    //         playerResources[type] = new List<ResourceCard>();
+
+    //         // 例如，给玩家添加一些资源
+    //         if (type == ResourceType.Silk)
+    //             playerResources[type].Add(new ResourceCard(type, 5 ));
+    //         else if (type == ResourceType.Gems)
+    //             playerResources[type].Add(new ResourceCard(type, 5 ));
+    //         else if (type == ResourceType.Tea)
+    //             playerResources[type].Add(new ResourceCard(type, 5 ));
+    //     }
+    // }
+
+    // 添加资源
+    public void AddResource(ResourceType type, int quantity)
+    {
+        for (int i = 0; i < quantity; i++)
+        {
+            resources[type].Add(new ResourceCard(type));
+        }
+    }
+
+    // 移除资源
+    public bool RemoveResource(ResourceType type, int quantity)
+    {
+        if (resources[type].Count >= quantity)
+        {
+            resources[type].RemoveRange(resources[type].Count - quantity, quantity);
+            return true;
+        }
+        return false;
     }
 }

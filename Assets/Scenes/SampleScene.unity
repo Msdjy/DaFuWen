@@ -912,23 +912,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d2be656bafcd2d488c49e26af66fae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileData:
-    id: 0
-    name: 
-    price: 0
-    rent: 0
-    owner: 0
-    level: 0
-    desc: 
-    type: 
-    upgradeCosts: 
-    upgradeRents: 
   tileIndex: 0
   owner: -1
   tileText: {fileID: 0}
-  cityLevel1Prefab: {fileID: 9050355663520557145, guid: c739c76c35c302d4197b2f1564db770a, type: 3}
-  cityLevel2Prefab: {fileID: 4319370092692084657, guid: 030a2f7bdcb5c544987af7a6483e1613, type: 3}
-  cityLevel3Prefab: {fileID: 7855120341553819439, guid: 760d114db36ec18448ab054246e20888, type: 3}
+  tileEventManager: {fileID: 0}
 --- !u!4 &937958493
 Transform:
   m_ObjectHideFlags: 0
@@ -997,7 +984,6 @@ MonoBehaviour:
     map: 
     rows: 0
     columns: 0
-    tiles: []
   tileIds: 
   tilePositions: []
 --- !u!1 &1013854460
@@ -1450,7 +1436,6 @@ MonoBehaviour:
   mapManager: {fileID: 942201121}
   playerManager: {fileID: 1896298797}
   tileEventManager: {fileID: 1624375263}
-  playerPrefab: {fileID: 5656479760880317746, guid: b6a258803c1ab0246bfdbf6137ff3c50, type: 3}
   infoText: {fileID: 2001562103}
   rollDiceButton: {fileID: 1417502948}
   boardTiles: []
@@ -1822,10 +1807,14 @@ MonoBehaviour:
   playerManager: {fileID: 1896298797}
   purchasePanel: {fileID: 1588605882}
   purchasePanelText: {fileID: 1308140671}
+  resourceManager: {fileID: 0}
   eventInfoText: {fileID: 1074889916}
   buyButton: {fileID: 6069596}
   skipButton: {fileID: 573975999}
   customFont: {fileID: 11400000, guid: 8b113d3686488e84ba8bcf7ac21c8d2b, type: 2}
+  cityLevel1Prefab: {fileID: 9050355663520557145, guid: c739c76c35c302d4197b2f1564db770a, type: 3}
+  cityLevel2Prefab: {fileID: 4319370092692084657, guid: 030a2f7bdcb5c544987af7a6483e1613, type: 3}
+  cityLevel3Prefab: {fileID: 7855120341553819439, guid: 760d114db36ec18448ab054246e20888, type: 3}
 --- !u!4 &1624375264
 Transform:
   m_ObjectHideFlags: 0
@@ -2061,7 +2050,6 @@ MonoBehaviour:
   mapManager: {fileID: 942201121}
   leftPlayerInfoText: {fileID: 1729276865}
   rightPlayerInfoText: {fileID: 1146803953}
-  infoText: {fileID: 2001562103}
 --- !u!4 &1896298798
 Transform:
   m_ObjectHideFlags: 0
@@ -2433,8 +2421,8 @@ SceneRoots:
   - {fileID: 942201120}
   - {fileID: 1896298798}
   - {fileID: 1624375264}
-  - {fileID: 937958493}
   - {fileID: 1175740110}
+  - {fileID: 937958493}
   - {fileID: 4877364059242994940}
   - {fileID: 1903094382153416617}
   - {fileID: 1821288858}

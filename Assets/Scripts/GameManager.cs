@@ -22,11 +22,18 @@ public class GameManager : MonoBehaviour
         SetupGame(); // 初始化游戏
     }
 
+    // public void StartGame()
+    // {
+    //     playerManager.InitializePlayers();
+    //     mapManager.GenerateMap();
+    //     StartCoroutine(TakeTurn());
+    // }
+
     private void SetupGame()
     {
         boardTiles = GetSortedTileControllers();
         rollDiceButton.onClick.AddListener(() => StartCoroutine(TakeTurn()));
-        playerManager.CreatePlayers();
+        playerManager.InitializePlayers();
         tileEventManager.gameManager = this;
         tileEventManager.playerManager = playerManager;
 

@@ -260,7 +260,7 @@ public class TileEventManager : MonoBehaviour
                 eventInfoText.text = $"\n{player.name} 抽取了 1 张 {resourceType} 资源卡";
                 break;
             case 1: // 失去一张资源卡
-                if (player.playerResources[ResourceType.Silk].Count > 0)  // 检查是否有某种资源
+                if (player.resources[ResourceType.Silk].Count > 0)  // 检查是否有某种资源
                 {
                     resourceManager.RemoveResource(player, ResourceType.Silk, 1);
                     eventInfoText.text = $"\n{player.name} 失去了 1 张 丝绸 资源卡";

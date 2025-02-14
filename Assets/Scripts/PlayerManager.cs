@@ -15,7 +15,7 @@ public class PlayerManager : MonoBehaviour
     public Text leftPlayerInfoText;
     public Text rightPlayerInfoText;
 
-    public void CreatePlayers()
+    public void InitializePlayers()
     {
         for (int i = 0; i < 2; i++)
         {
@@ -32,9 +32,9 @@ public class PlayerManager : MonoBehaviour
             currentTileIndex = 0,
             playerColor = (index == 0) ? Color.red : Color.green
         };
-        newPlayer.initializeResources();
+        newPlayer.InitializeResources();
 
-        Vector3 startPos = GetTilePosition(newPlayer.currentTileIndex);
+        Vector3 startPos = mapManager.GetTilePosition(newPlayer.currentTileIndex);
         GameObject avatar = Instantiate(playerPrefab, startPos, Quaternion.identity);
         newPlayer.avatar = avatar;
 
@@ -42,6 +42,12 @@ public class PlayerManager : MonoBehaviour
         CreatePlayerText(avatar, newPlayer);
 
         return newPlayer;
+    }
+
+    // 获取当前玩家
+    public Player GetCurrentPlayer()
+    {
+        return players[currentPlayerIndex];
     }
 
     // 添加 MovePlayer 方法
@@ -60,22 +66,22 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    Vector3 GetTilePosition(int tileIndex)
-    {
-        if (mapManager == null || mapManager.tilePositions == null || mapManager.tilePositions.Count == 0)
-        {
-            Debug.LogError("MapManager 引用或 tilePositions 未初始化！");
-            return Vector3.zero;
-        }
+    // Vector3 GetTilePosition(int tileIndex)
+    // {
+    //     if (mapManager == null || mapManager.tilePositions == null || mapManager.tilePositions.Count == 0)
+    //     {
+    //         Debug.LogError("MapManager 引用或 tilePositions 未初始化！");
+    //         return Vector3.zero;
+    //     }
 
-        if (tileIndex < 0 || tileIndex >= mapManager.tilePositions.Count)
-        {
-            Debug.LogError($"Tile index {tileIndex} 超出范围！");
-            return mapManager.tilePositions[0];
-        }
+    //     if (tileIndex < 0 || tileIndex >= mapManager.tilePositions.Count)
+    //     {
+    //         Debug.LogError($"Tile index {tileIndex} 超出范围！");
+    //         return mapManager.tilePositions[0];
+    //     }
 
-        return mapManager.tilePositions[tileIndex];
-    }
+    //     return mapManager.tilePositions[tileIndex];
+    // }
 
     void SetAvatarColor(GameObject avatar, Player player)
     {
@@ -105,18 +111,12 @@ public class PlayerManager : MonoBehaviour
         player.playerText = tmp;
     }
 
+    // 生成玩家的详细信息文本
     private string GeneratePlayerInfoText(Player player)
     {
-        if (player.playerResources == null)
-        {
-            Debug.LogError("Player's resources are not initialized!");
-            return $"{player.name}\nMoney: ${player.money}";
-        }
-
         string playerInfo = $"{player.name}\nMoney: ${player.money}\n";
 
-        // 添加资源信息
-        foreach (var resource in player.playerResources)
+        foreach (var resource in player.resources)
         {
             playerInfo += $"{resource.Key}: {resource.Value.Count}\n";
         }

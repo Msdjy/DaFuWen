@@ -67,6 +67,21 @@ public class MapManager : MonoBehaviour
     #endregion
 
     #region Map Generation
+
+    // 获取指定 Tile 索引的坐标
+    public Vector3 GetTilePosition(int tileIndex)
+    {
+        if (tileIndex >= 0 && tileIndex < tilePositions.Count)
+        {
+            return tilePositions[tileIndex];
+        }
+        else
+        {
+            Debug.LogError($"Tile index {tileIndex} is out of range.");
+            return Vector3.zero; // 默认返回 (0, 0, 0) 位置
+        }
+    }
+
     /// <summary>
     /// 生成地图：只生成棋盘边缘的 Tile，
     /// 顺序：从右下角开始，沿边界顺时针遍历（角点只生成一次）。
@@ -119,6 +134,13 @@ public class MapManager : MonoBehaviour
         if (tileId == 0)
             return;
 
+        // 确保 tiles 列表不为空
+        if (config.tiles == null || config.tiles.Count == 0)
+        {
+            Debug.LogError("地图配置文件中的 tiles 数据为空！");
+            return;
+        }
+
         // 分别计算内圈和外圈位置
         Vector3 innerPosition = GetInnerPosition(r, c);
         // 记录内圈位置
@@ -127,6 +149,11 @@ public class MapManager : MonoBehaviour
 
         // 查找对应的 Tile 数据
         Tile tileData = config.tiles.FirstOrDefault(t => t.id == tileId);
+        if (tileData == null)
+        {
+            Debug.LogError($"未找到与 Tile ID {tileId} 对应的 Tile 数据！");
+            return;
+        }
         if (tileData != null && (tileData.type != "city"))
         {
             Debug.Log("跳过事件格子: " + tileData.name);
