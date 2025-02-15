@@ -154,7 +154,7 @@ public class MapManager : MonoBehaviour
         tc.tileData = tileData;
         tc.tileIndex = tileId;
         UpdateTileColor(tileObj, tileData);
-        CreateTileText(tileObj, tileData, tileId);
+        // CreateTileText(tileObj, tileData, tileId);
 
         Debug.Log("生成 Tile: " + (tileData != null ? tileData.name : tileId.ToString()));
         Debug.Log($"tileData: id={tileData.id}, name={tileData.name}, type={tileData.type}, price={tileData.price}");

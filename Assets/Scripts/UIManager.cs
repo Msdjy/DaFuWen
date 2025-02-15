@@ -5,14 +5,13 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
-    public TextMeshProUGUI infoText;
+    public TextMeshProUGUI turnInfoText;
     public GameObject purchasePanel;
     public TextMeshProUGUI purchasePanelText;
     public TextMeshProUGUI eventInfoText;
-    public Button buyButton;
-    public Button skipButton;
 
-    private System.Action<bool> purchaseCallback;
+    public Text leftPlayerInfoText;
+    public Text rightPlayerInfoText;
 
     private void Awake()
     {
@@ -20,31 +19,32 @@ public class UIManager : MonoBehaviour
         purchasePanel.SetActive(false);
     }
 
-    public void UpdatePlayerInfo(Player player)
+    public void ShowTurnInfo(string message)
     {
-        string info = $"{player.name}\nMoney: ${player.money}\n";
-        foreach (var resource in player.resources)
-        {
-            info += $"{resource.Key}: {resource.Value.Count}\n";
-        }
-        infoText.text = info;
-    }
-
-    public void ShowPurchasePanel(string message, System.Action<bool> callback)
-    {
-        purchasePanelText.text = message;
-        purchasePanel.SetActive(true);
-        purchaseCallback = callback;
-    }
-
-    public void OnPurchaseDecision(bool decision)
-    {
-        purchasePanel.SetActive(false);
-        purchaseCallback?.Invoke(decision);
+        turnInfoText.text = message;
     }
 
     public void ShowEventInfo(string message)
     {
         eventInfoText.text = message;
+    }
+
+    public void ShowPlayerInfo(string playerInfo1, string playerInfo2, Color playerColor1, Color playerColor2)
+    {
+        leftPlayerInfoText.text = playerInfo1;
+        rightPlayerInfoText.text = playerInfo2;
+
+        leftPlayerInfoText.color = playerColor1;
+        rightPlayerInfoText.color = playerColor2;
+    }
+
+    public void ShowPurchasePanelText(string message)
+    {
+        purchasePanelText.text = message;
+    }
+
+    public void SetPurchasePanelActive(bool active)
+    {
+        purchasePanel.SetActive(active);
     }
 }

@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Linq;
 using System.Collections;
+using System;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -12,15 +13,13 @@ public class PlayerManager : MonoBehaviour
     public GameObject playerPrefab;
     public MapManager mapManager;
 
-    public Text leftPlayerInfoText;
-    public Text rightPlayerInfoText;
-
     public void InitializePlayers()
     {
         for (int i = 0; i < 2; i++)
         {
             players.Add(CreatePlayer(i));
         }
+        UpdatePlayerInfoText();
     }
 
     private Player CreatePlayer(int index)
@@ -39,7 +38,7 @@ public class PlayerManager : MonoBehaviour
         newPlayer.avatar = avatar;
 
         SetAvatarColor(avatar, newPlayer);
-        CreatePlayerText(avatar, newPlayer);
+        // CreatePlayerText(avatar, newPlayer);
 
         return newPlayer;
     }
@@ -93,23 +92,20 @@ public class PlayerManager : MonoBehaviour
     private string GeneratePlayerInfoText(Player player)
     {
         string playerInfo = $"{player.name}\nMoney: ${player.money}\n";
-
         foreach (var resource in player.resources)
         {
             playerInfo += $"{resource.Key}: {resource.Value.Count}\n";
         }
-
         return playerInfo;
     }
 
     public void UpdatePlayerInfoText()
     {
         // 更新左右玩家的资源信息
-        leftPlayerInfoText.text = GeneratePlayerInfoText(players[0]);
-        rightPlayerInfoText.text = GeneratePlayerInfoText(players[1]);
+        string playerInfo1  = GeneratePlayerInfoText(players[0]);
+        string playerInfo2 = GeneratePlayerInfoText(players[1]);
 
-        leftPlayerInfoText.color = players[0].playerColor;
-        rightPlayerInfoText.color = players[1].playerColor;
+        UIManager.Instance.ShowPlayerInfo(playerInfo1, playerInfo2, players[0].playerColor, players[1].playerColor);
     }
 
     public void SwitchPlayer()

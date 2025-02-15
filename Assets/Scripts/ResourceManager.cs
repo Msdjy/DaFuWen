@@ -33,7 +33,7 @@ public class ResourceManager : MonoBehaviour
     }
 
 
- // 显示玩家所有资源
+    // 显示玩家所有资源
     public void DisplayResources(Player player)
     {
         string resourceInfo = $"{player.name} Resources:\n";
