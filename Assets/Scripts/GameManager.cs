@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator TakeTurn()
     {
         rollDiceButton.interactable = false;
-        Player currentPlayer = playerManager.players[playerManager.currentPlayerIndex];
+        Player currentPlayer = playerManager.GetCurrentPlayer();
         int diceRoll = RollDice();
         UIManager.Instance.ShowTurnInfo($"{currentPlayer.name} 掷出了 {diceRoll} 点");
         yield return new WaitForSeconds(1f);
@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(tileEventManager.ProcessTileEvent(currentPlayer, currentPlayer.currentTileIndex));
 
         playerManager.SwitchPlayer();
-        UIManager.Instance.ShowTurnInfo($"当前回合: {playerManager.players[playerManager.currentPlayerIndex].name}\n");
+        UIManager.Instance.ShowTurnInfo($"当前回合: {playerManager.GetCurrentPlayer().name}\n");
         playerManager.UpdatePlayerInfoText();
         rollDiceButton.interactable = true;
     }

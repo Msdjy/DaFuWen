@@ -60,8 +60,7 @@ public class MapManager : MonoBehaviour
     }
     #endregion
 
-    #region Map Generation
-
+    #region Position
     // 获取指定 Tile 索引的坐标
     public Vector3 GetTilePosition(int tileIndex)
     {
@@ -72,6 +71,11 @@ public class MapManager : MonoBehaviour
         Debug.LogError($"Tile index {tileIndex} is out of range.");
         return Vector3.zero;
     }
+    #endregion
+
+    #region Map Generation
+
+
 
     /// <summary>
     /// 生成地图：只生成棋盘边缘的 Tile，
@@ -82,32 +86,32 @@ public class MapManager : MonoBehaviour
         // 1. 底边：从右下角到左下角
         for (int c = config.columns - 1; c >= 0; c--)
         {
-            ProcessTile(config.rows - 1, c);
+            CreateTile(config.rows - 1, c);
         }
 
         // 2. 左侧：从左下角到左上角
         for (int r = config.rows - 2; r >= 1; r--)
         {
-            ProcessTile(r, 0);
+            CreateTile(r, 0);
         }
 
         // 3. 顶边：从左上角到右上角
         for (int c = 0; c < config.columns; c++)
         {
-            ProcessTile(0, c);
+            CreateTile(0, c);
         }
 
         // 4. 右侧：从右上角到右下角
         for (int r = 1; r < config.rows - 1; r++)
         {
-            ProcessTile(r, config.columns - 1);
+            CreateTile(r, config.columns - 1);
         }
     }
 
     
     #endregion
 
-    #region Tile Processing
+    #region Tile Generation
 
     /// <summary>
     /// 根据行和列生成单个 Tile：
@@ -118,7 +122,7 @@ public class MapManager : MonoBehaviour
     /// </summary>
     /// <param name="r">行号</param>
     /// <param name="c">列号</param>
-    private void ProcessTile(int r, int c)
+    private void CreateTile(int r, int c)
     {
         int index = r * config.columns + c;
         int tileId = config.map[index];
@@ -153,7 +157,7 @@ public class MapManager : MonoBehaviour
         TileController tc = tileObj.AddComponent<TileController>();
         tc.tileData = tileData;
         tc.tileIndex = tileId;
-        UpdateTileColor(tileObj, tileData);
+        InitTileColor(tileObj, tileData);
         // CreateTileText(tileObj, tileData, tileId);
 
         Debug.Log("生成 Tile: " + (tileData != null ? tileData.name : tileId.ToString()));
@@ -161,7 +165,7 @@ public class MapManager : MonoBehaviour
 
     }
 
-    private void UpdateTileColor(GameObject tileObj, Tile tileData)
+    private void InitTileColor(GameObject tileObj, Tile tileData)
     {
         MeshRenderer cubeRenderer = tileObj.GetComponentInChildren<MeshRenderer>();
         if (cubeRenderer != null)

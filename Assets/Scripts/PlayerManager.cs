@@ -13,6 +13,7 @@ public class PlayerManager : MonoBehaviour
     public GameObject playerPrefab;
     public MapManager mapManager;
 
+    #region Create 
     public void InitializePlayers()
     {
         for (int i = 0; i < 2; i++)
@@ -38,35 +39,8 @@ public class PlayerManager : MonoBehaviour
         newPlayer.avatar = avatar;
 
         SetAvatarColor(avatar, newPlayer);
-        // CreatePlayerText(avatar, newPlayer);
 
         return newPlayer;
-    }
-
-    public Player GetCurrentPlayer() => players[currentPlayerIndex];
-
-    public IEnumerator MovePlayer(Player player, int steps)
-    {
-        for (int i = 0; i < steps; i++)
-        {
-            player.currentTileIndex = (player.currentTileIndex + 1) % mapManager.tilePositions.Count;
-            Vector3 targetPos = mapManager.tilePositions[player.currentTileIndex];
-            while (Vector3.Distance(player.avatar.transform.position, targetPos) > 0.1f)
-            {
-                player.avatar.transform.position = Vector3.MoveTowards(player.avatar.transform.position, targetPos, Time.deltaTime * 5f);
-                yield return null;
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-    private void SetAvatarColor(GameObject avatar, Player player)
-    {
-        MeshRenderer avatarRenderer = avatar.GetComponentInChildren<MeshRenderer>();
-        if (avatarRenderer != null)
-        {
-            avatarRenderer.material.color = player.playerColor;
-        }
     }
 
     private void CreatePlayerText(GameObject avatar, Player player)
@@ -88,6 +62,33 @@ public class PlayerManager : MonoBehaviour
         player.playerText = tmp;
     }
 
+    private void SetAvatarColor(GameObject avatar, Player player)
+    {
+        MeshRenderer avatarRenderer = avatar.GetComponentInChildren<MeshRenderer>();
+        if (avatarRenderer != null)
+        {
+            avatarRenderer.material.color = player.playerColor;
+        }
+    }
+    #endregion
+
+    #region Turn
+    public void SwitchPlayer()
+    {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
+    }
+    #endregion
+
+    #region Move 
+    public Player GetCurrentPlayer() => players[currentPlayerIndex];
+
+    public IEnumerator MovePlayer(Player player, int steps)
+    {
+        yield return StartCoroutine(player.MoveTo(mapManager, steps)); // 调用Player类中的MoveTo方法
+    }
+    #endregion
+
+    #region UI
     // 生成玩家的详细信息文本
     private string GeneratePlayerInfoText(Player player)
     {
@@ -107,9 +108,5 @@ public class PlayerManager : MonoBehaviour
 
         UIManager.Instance.ShowPlayerInfo(playerInfo1, playerInfo2, players[0].playerColor, players[1].playerColor);
     }
-
-    public void SwitchPlayer()
-    {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.Count;
-    }
+    #endregion
 }
