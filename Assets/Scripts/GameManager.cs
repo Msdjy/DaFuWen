@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         PlayerManager.Instance.InitializePlayers();
 
         // 测试
-        StartCoroutine(TileManager.Instance.AutoBuyAndUpgradeCity(PlayerManager.Instance.GetPlayerByIndex(0), 1));
+        StartCoroutine(TileEventManager.Instance.AutoBuyAndUpgradeCityAndResource(PlayerManager.Instance.GetPlayerByIndex(0), 1));
     }
 
     private IEnumerator TakeTurn()
@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
 
         PlayerManager.Instance.SwitchPlayer();
         ShowTurnInfo($"当前回合: {PlayerManager.Instance.GetCurrentPlayer().name}\n");
-        PlayerManager.Instance.UpdatePlayerInfoText();
+        PlayerManager.Instance.ShowPlayerInfo();
         rollDiceButton.interactable = true;
     }
 

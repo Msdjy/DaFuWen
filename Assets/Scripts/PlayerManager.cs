@@ -5,18 +5,32 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Collections;
 using System;
+using System.Linq.Expressions;
 
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
     public List<Player> players = new List<Player>();
-    public int currentPlayerIndex = 0;
-    public GameObject playerPrefab;
-    public MapManager mapManager;
 
-    
-    public Text leftPlayerInfoText;
-    public Text rightPlayerInfoText;
+    // 四个颜色
+    public Color[] playerColors = new Color[4]
+    {
+        // 依赖编译器中设置的颜色，这里设置的没用
+        new Color(1f, 0.647f, 0.0f),  // 橙色 (RGB: 1, 0.647, 0)
+        new Color(0.6f, 0.3f, 0.1f),  // 棕色 (RGB: 0.6, 0.3, 0.1)
+        new Color(0.5f, 0.5f, 0.5f),  // 灰色 (RGB: 0.5, 0.5, 0.5)
+        new Color(0.8f, 0.2f, 0.2f)   // 红色 (RGB: 0.8, 0.2, 0.2)
+    };
+
+
+    public int currentPlayerIndex = 0;
+
+    public GameObject[] playerPrefabs = new GameObject[4];
+    public TextMeshProUGUI[] PlayerGoldInfoTexts = new TextMeshProUGUI[4];
+    public TextMeshProUGUI[] PlayerResourceInfoTexts = new TextMeshProUGUI[4];
+    public TextMeshProUGUI[] PlayerHousePriceInfoTexts = new TextMeshProUGUI[4];
+
+
 
 
     #region Create 
@@ -34,11 +48,12 @@ public class PlayerManager : MonoBehaviour
     }
     public void InitializePlayers()
     {
-        for (int i = 0; i < 2; i++)
+        int playerCount = 4;
+        for (int i = 0; i < playerCount; i++)
         {
             players.Add(CreatePlayer(i));
         }
-        UpdatePlayerInfoText();
+        ShowPlayerInfo();
     }
 
     private Player CreatePlayer(int index)
@@ -48,36 +63,16 @@ public class PlayerManager : MonoBehaviour
             name = $"Player {index + 1}",
             money = 15000,
             currentTileIndex = 0,
-            playerColor = (index == 0) ? Color.red : Color.green
+            playerColor = playerColors[index]
         };
         newPlayer.InitializeResources();
 
         Vector3 startPos = TileManager.Instance.GetTileDataPositionByIndex(newPlayer.currentTileIndex);
-        GameObject avatar = Instantiate(playerPrefab, startPos, Quaternion.identity);
-        newPlayer.avatar = avatar;
+        newPlayer.avatar = Instantiate(playerPrefabs[index], startPos, Quaternion.identity);
 
-        SetAvatarColor(avatar, newPlayer);
+        SetAvatarColor(newPlayer.avatar, newPlayer);
 
         return newPlayer;
-    }
-
-    private void CreatePlayerText(GameObject avatar, Player player)
-    {
-        GameObject textObj = new GameObject("PlayerInfo");
-        textObj.transform.SetParent(avatar.transform);
-        textObj.transform.localPosition = new Vector3(0, 2.5f, 0);
-        textObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
-        textObj.transform.localScale = Vector3.one;
-
-        TextMeshProUGUI tmp = textObj.AddComponent<TextMeshProUGUI>();
-        tmp.text = $"{player.name}\nMoney: ${player.money}";
-        tmp.fontSize = 14;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = player.playerColor;
-
-        // 生成玩家信息文本
-        tmp.text = GeneratePlayerInfoText(player);
-        player.playerText = tmp;
     }
 
     private void SetAvatarColor(GameObject avatar, Player player)
@@ -103,36 +98,19 @@ public class PlayerManager : MonoBehaviour
 
     public IEnumerator MovePlayer(Player player, int steps)
     {
-        yield return StartCoroutine(player.MoveTo(mapManager, steps)); // 调用Player类中的MoveTo方法
+        yield return StartCoroutine(player.MoveTo(steps)); // 调用Player类中的MoveTo方法
     }
     #endregion
 
-    #region UI
-    // 生成玩家的详细信息文本
-    private string GeneratePlayerInfoText(Player player)
-    {
-        string playerInfo = $"{player.name}\nMoney: ${player.money}\n";
-        foreach (var resource in player.resources)
-        {
-            playerInfo += $"{resource.Key}: {resource.Value.Count}\n";
-        }
-        return playerInfo;
-    }
-
-    public void UpdatePlayerInfoText()
-    {
-        // 更新左右玩家的资源信息
-        string playerInfo1  = GeneratePlayerInfoText(players[0]);
-        string playerInfo2 = GeneratePlayerInfoText(players[1]);
-
-        ShowPlayerInfo(playerInfo1, playerInfo2, players[0].playerColor, players[1].playerColor);
-    }
-    #endregion
+    
 
 
     #region Update
     // 根据index获取玩家
     public Player GetPlayerByIndex(int index) => players[index];
+    #endregion
+
+    #region Money
     // 玩家1为玩家2支付租金
     public void PayRent(int playerIndex1, int playerIndex2, int rent)
     {
@@ -141,23 +119,21 @@ public class PlayerManager : MonoBehaviour
 
         player1.SpendMoney(rent);
         player2.EarnMoney(rent);
-        UpdatePlayerInfoText();
+        ShowPlayerInfo();
     }
 
-    #endregion
 
-    #region Money
     // 玩家X花费了钱
     public void SpendMoney(Player player, int amount)
     {
         player.SpendMoney(amount);
-        UpdatePlayerInfoText();
+        ShowPlayerInfo();
     }
     // 玩家x获得了钱
     public void EarnMoney(Player player, int amount)
     {
         player.EarnMoney(amount);
-        UpdatePlayerInfoText();
+        ShowPlayerInfo();
     }
     // 判断玩家钱是否够
     public bool CanPlayerAfford(Player player, int amount)
@@ -167,16 +143,28 @@ public class PlayerManager : MonoBehaviour
 
     #endregion
 
+    #region House Price
+    // 玩家X的房产价值
+    public void AddHousePrice(Player player, float housePrice)
+    {
+        player.housePrice += housePrice;
+        ShowPlayerInfo();
+    }
+
+    #endregion
+
     #region Resource
     // 玩家X获得资源
     public void AddResource(Player player, ResourceType type, int quantity)
     {
         player.AddResource(type, quantity);
+        ShowPlayerInfo();
     }
     // 玩家X失去资源
     public void RemoveResource(Player player, ResourceType type, int quantity)
     {
         player.RemoveResource(type, quantity);
+        ShowPlayerInfo();
     }
     // 玩家X随机失去资源
     public void RemoveRandomResource(Player player)
@@ -192,6 +180,7 @@ public class PlayerManager : MonoBehaviour
         ResourceType randomType = player.resources.Keys.ElementAt(UnityEngine.Random.Range(0, player.resources.Count));
         // 此类资源失去一个
         player.RemoveResource(randomType, 1);
+        ShowPlayerInfo();
     }
     // 玩家X随机获得资源
     public void AddRandomResource(Player player)
@@ -199,6 +188,7 @@ public class PlayerManager : MonoBehaviour
         // 不同type的资源获得概率相同
         ResourceType randomType = (ResourceType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(ResourceType)).Length);
         player.AddResource(randomType, 1);
+        ShowPlayerInfo();
     }
     // 获取玩家X某资源的数量
     public int GetResourceCount(Player player, ResourceType type)
@@ -214,14 +204,15 @@ public class PlayerManager : MonoBehaviour
 
 
     #region UI
-    
-    public void ShowPlayerInfo(string playerInfo1, string playerInfo2, Color playerColor1, Color playerColor2)
-    {
-        leftPlayerInfoText.text = playerInfo1;
-        rightPlayerInfoText.text = playerInfo2;
-
-        leftPlayerInfoText.color = playerColor1;
-        rightPlayerInfoText.color = playerColor2;
+    // 生成玩家的详细信息文本
+    public void ShowPlayerInfo()
+    {   
+        for (int i = 0; i < players.Count; i++)
+        {
+            PlayerGoldInfoTexts[i].text = $"{players[i].money}";
+            PlayerResourceInfoTexts[i].text = $"{GetAllResourceCount(players[i])}";
+            PlayerHousePriceInfoTexts[i].text = $"{players[i].housePrice}";
+        }
     }
     #endregion
 }

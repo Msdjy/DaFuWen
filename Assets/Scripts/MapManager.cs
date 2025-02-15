@@ -21,12 +21,6 @@ public class MapManager : MonoBehaviour
     #region Runtime Data
     [HideInInspector]
     public MapConfig config;
-    [HideInInspector]
-    public List<int> tileIndex2Id = new List<int>();
-    // TODO 这个tileIndex2Id后续也去掉，用TileManager的管理
-    /// <summary>
-    /// 内圈（逻辑）位置（延法向量 1 个单位后的位置）
-    /// </summary>
 
     #endregion
 
@@ -48,13 +42,8 @@ public class MapManager : MonoBehaviour
 
         Debug.Log($"Rows: {config.rows}, Columns: {config.columns}, Map Count: {config.map.Count}");
 
-        tileIndex2Id.Clear();
-        // tileInnerPosition.Clear();
-
         GenerateMap();
 
-        Debug.Log("Tile IDs: " + string.Join(", ", tileIndex2Id));
-        // Debug.Log("Tile Inner Positions: " + string.Join(", ", tileInnerPosition.Select(p => p.ToString()).ToArray()));
     }
     #endregion
 
@@ -125,12 +114,8 @@ public class MapManager : MonoBehaviour
 
         // 分别计算内圈和外圈位置
         Vector3 innerPosition = GetInnerPosition(r, c);
-        // 记录内圈位置
-        tileIndex2Id.Add(tileId);
-
         Vector3 outerPosition = GetOuterPosition(r, c);
-        // GameObject tileObj = Instantiate(tilePrefab, outerPosition, Quaternion.identity);
-        
+
         TileManager.Instance.RegisterTile(tile, innerPosition, outerPosition);  // 将Tile注册到TileManager
 
     }

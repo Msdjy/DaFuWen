@@ -193,30 +193,6 @@ public class TileManager : MonoBehaviour
     }
 
     #endregion
-
-    #region test 
-    public IEnumerator AutoBuyAndUpgradeCity(Player player, int tileIndex){
-        // 自动购买和升级城市
-        TileData tileData = GetTileDataByIndex(tileIndex);
-        if (tileData.tile.CanPurchase())
-        {
-            ownerTile(tileData, player.playerIndex, player.playerColor);
-        }
-        
-        // 升级城市三次
-        for (int i = 0; i < 3; i++)
-        {
-            if (tileData.tile.CanUpgrade())
-            {
-                UpgradeTile(tileData.tile);
-                yield return new WaitForSeconds(1);
-            }
-        }
-        yield break; 
-
-    }
-    
-    #endregion
 }
 
 

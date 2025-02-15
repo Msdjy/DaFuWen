@@ -149,6 +149,7 @@ public class TileEventManager : MonoBehaviour
             if (PlayerManager.Instance.CanPlayerAfford(player, tile.upgradeCosts[tile.level]))
             {
                 PlayerManager.Instance.SpendMoney(player, tile.upgradeCosts[tile.level]);
+                PlayerManager.Instance.AddHousePrice(player, tile.upgradeCosts[tile.level] / 2);
                 TileManager.Instance.UpgradeTile(tile);
 
                 ShowEventInfo($"\n{player.name} 升级了 {tile.name}。花费了 ${tile.upgradeCosts[tile.level]}");
@@ -183,8 +184,9 @@ public class TileEventManager : MonoBehaviour
             if (PlayerManager.Instance.CanPlayerAfford(player, tile.price))
             {
                 PlayerManager.Instance.SpendMoney(player, tile.price);
+                PlayerManager.Instance.AddHousePrice(player, tile.price / 2);
                 TileManager.Instance.ownerTile(tileData, player.playerIndex, player.playerColor);
-                
+
                 ShowEventInfo($"\n{player.name} 购买了 {tile.name}， 花费了 ${tile.price}");
             }
             else
@@ -355,4 +357,39 @@ public class TileEventManager : MonoBehaviour
     }
     #endregion
     
+
+    #region test 
+    public IEnumerator AutoBuyAndUpgradeCityAndResource(Player player, int tileIndex){
+        // 自动购买和升级城市
+        TileData tileData = TileManager.Instance.GetTileDataByIndex(tileIndex);
+        if (tileData.tile.CanPurchase())
+        {   
+            PlayerManager.Instance.SpendMoney(player, tileData.tile.price);
+            PlayerManager.Instance.AddHousePrice(player, tileData.tile.price / 2);
+            TileManager.Instance.ownerTile(tileData, player.playerIndex, player.playerColor);
+        }
+        
+        // 升级城市三次
+        for (int i = 0; i < 3; i++)
+        {
+            if (tileData.tile.CanUpgrade())
+            {
+                PlayerManager.Instance.SpendMoney(player, tileData.tile.upgradeCosts[tileData.tile.level]);
+                PlayerManager.Instance.AddHousePrice(player, tileData.tile.upgradeCosts[tileData.tile.level] / 2);
+                TileManager.Instance.UpgradeTile(tileData.tile);
+                yield return new WaitForSeconds(1);
+            }
+        }
+        // 获得资源卡
+        for (int i = 0; i < 3; i++)
+        {
+            PlayerManager.Instance.AddRandomResource(player);
+            yield return new WaitForSeconds(1);
+        }
+
+        yield break; 
+
+    }
+    
+    #endregion
 }

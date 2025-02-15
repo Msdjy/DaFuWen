@@ -16,11 +16,12 @@ public class Player
     public GameObject avatar;
     /// <summary>
     /// 用于显示玩家名称和资金信息的 TextMeshPro 组件
-    /// </summary>
-    public TextMeshProUGUI playerText;
+    // /// </summary>
+    // public TextMeshProUGUI playerText;
 
     public int playerIndex;
     public Dictionary<ResourceType, List<ResourceCard>> resources;
+    public float housePrice;
 
     // 新增的字段：玩家的颜色
     public Color playerColor;
@@ -60,7 +61,7 @@ public class Player
 
     #region move
     // 移动玩家到目标位置
-    public IEnumerator MoveTo(MapManager mapManager, int steps)
+    public IEnumerator MoveTo(int steps)
     {
         for (int i = 0; i < steps; i++)
         {
@@ -92,6 +93,10 @@ public class Player
     {
         money += amount;
     }
+    #endregion
+
+    #region house
+    // 购买房屋
     #endregion
 
 }
