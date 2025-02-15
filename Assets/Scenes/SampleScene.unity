@@ -319,50 +319,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &259320585
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 259320587}
-  - component: {fileID: 259320586}
-  m_Layer: 0
-  m_Name: ResourceManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &259320586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 259320585}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e50554b7c23c1ac4ab2a01c5dca87083, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &259320587
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 259320585}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.323666, y: 5.037628, z: -2.771514}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -937,8 +893,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c38f608e69eab3942a3f7bea6b8766fc, type: 2}
+  m_sharedMaterial: {fileID: -1969409165135075042, guid: c38f608e69eab3942a3f7bea6b8766fc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1063,65 +1019,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &937958491
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 937958493}
-  - component: {fileID: 937958492}
-  m_Layer: 0
-  m_Name: TileController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &937958492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 937958491}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d2be656bafcd2d488c49e26af66fae0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tileData:
-    id: 0
-    name: 
-    price: 0
-    rent: 0
-    owner: -1
-    level: 0
-    desc: 
-    type: 
-    upgradeCosts: 
-    upgradeRents: 
-  tileIndex: 0
-  owner: -1
-  tileText: {fileID: 0}
-  tileEventManager: {fileID: 0}
---- !u!4 &937958493
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 937958491}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.3131733, y: -17.782246, z: 0.5486929}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &942201119
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,7 +1066,6 @@ MonoBehaviour:
   jsonConfig: {fileID: 4900000, guid: 7d56641367c83ea4481465a808c0a863, type: 3}
   spacing: 2
   yOffset: 0
-  customFont: {fileID: 11400000, guid: 8b113d3686488e84ba8bcf7ac21c8d2b, type: 2}
   config:
     map: 
     rows: 0
@@ -1371,8 +1267,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c38f608e69eab3942a3f7bea6b8766fc, type: 2}
+  m_sharedMaterial: {fileID: -1969409165135075042, guid: c38f608e69eab3942a3f7bea6b8766fc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1680,11 +1576,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d569ffcd7336cb646a775a3d1bce7889, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapManager: {fileID: 942201121}
-  playerManager: {fileID: 1896298797}
-  tileEventManager: {fileID: 1624375263}
   rollDiceButton: {fileID: 1417502948}
-  boardTiles: []
+  turnInfoText: {fileID: 741006150}
 --- !u!1 &1308140669
 GameObject:
   m_ObjectHideFlags: 0
@@ -1744,8 +1637,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c38f608e69eab3942a3f7bea6b8766fc, type: 2}
+  m_sharedMaterial: {fileID: -1969409165135075042, guid: c38f608e69eab3942a3f7bea6b8766fc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2097,9 +1990,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 451a2f6a7faa46d47b4b67c0239fafae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1294377445}
-  playerManager: {fileID: 1896298797}
-  resourceManager: {fileID: 259320586}
+  purchasePanel: {fileID: 1588605882}
+  purchasePanelText: {fileID: 1308140671}
+  eventInfoText: {fileID: 1104973484}
   buyButton: {fileID: 6069596}
   skipButton: {fileID: 573975999}
   cityLevel1Prefab: {fileID: 9050355663520557145, guid: c739c76c35c302d4197b2f1564db770a, type: 3}
@@ -2338,6 +2231,8 @@ MonoBehaviour:
   currentPlayerIndex: 0
   playerPrefab: {fileID: 5656479760880317746, guid: b6a258803c1ab0246bfdbf6137ff3c50, type: 3}
   mapManager: {fileID: 942201121}
+  leftPlayerInfoText: {fileID: 1729276865}
+  rightPlayerInfoText: {fileID: 1146803953}
 --- !u!4 &1896298798
 Transform:
   m_ObjectHideFlags: 0
@@ -2489,56 +2384,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023855593}
   m_CullTransparentMesh: 1
---- !u!1 &2029874466
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2029874468}
-  - component: {fileID: 2029874467}
-  m_Layer: 0
-  m_Name: UIManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2029874467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2029874466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 215a0c5f0f55d6f44acd73614e97e850, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  turnInfoText: {fileID: 741006150}
-  purchasePanel: {fileID: 1588605882}
-  purchasePanelText: {fileID: 1308140671}
-  eventInfoText: {fileID: 1104973484}
-  leftPlayerInfoText: {fileID: 1729276865}
-  rightPlayerInfoText: {fileID: 1146803953}
---- !u!4 &2029874468
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2029874466}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.323666, y: 5.037628, z: -2.771514}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1903094382153416617
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2676,16 +2521,13 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 1294377444}
   - {fileID: 942201120}
+  - {fileID: 1294377444}
   - {fileID: 1346845721}
   - {fileID: 1896298798}
   - {fileID: 1624375264}
-  - {fileID: 259320587}
-  - {fileID: 2029874468}
   - {fileID: 1175740110}
   - {fileID: 4877364059242994940}
-  - {fileID: 937958493}
   - {fileID: 1903094382153416617}
   - {fileID: 1821288858}
   - {fileID: 224666264}

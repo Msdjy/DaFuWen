@@ -2,11 +2,16 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TileEventManager : MonoBehaviour
 {
     // 单例
     public static TileEventManager Instance;
+
+    public GameObject purchasePanel;
+    public TextMeshProUGUI purchasePanelText;
+    public TextMeshProUGUI eventInfoText;
     public Button buyButton;
     public Button skipButton;
 
@@ -17,12 +22,24 @@ public class TileEventManager : MonoBehaviour
     private bool decisionMade;
     private bool buyDecision;
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
         buyButton.onClick.AddListener(OnBuyButtonClicked);
         skipButton.onClick.AddListener(OnSkipButtonClicked);
         // 清空 eventInfoText
-        UIManager.Instance.ShowEventInfo("");
+        ShowEventInfo("");
+        SetPurchasePanelActive(false);
     }
 
     #region Process Tile Event
@@ -46,6 +63,8 @@ public class TileEventManager : MonoBehaviour
             {
                 // 当前玩家向城市所有者支付租金
                 PlayerManager.Instance.PayRent(player.playerIndex, tile.owner, tile.rent);
+                ShowEventInfo($"\n{player.name} 向 {PlayerManager.Instance.GetPlayerByIndex(tile.owner).name} 支付了租金 ${tile.rent}");
+
             }
             // 如果该城市已经被当前玩家购买
             else
@@ -57,13 +76,13 @@ public class TileEventManager : MonoBehaviour
                 }
                 else
                 {
-                    UIManager.Instance.ShowEventInfo($"{tile.name} 已经达到最大等级。");
+                    ShowEventInfo($"{tile.name} 已经达到最大等级。");
                 }
             }
         }
         else if (tile != null && tile.type == "event")
         {
-            UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子");
+            ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子");
             yield return StartCoroutine(TriggerEventCard(player));
         }
         else
@@ -83,27 +102,27 @@ public class TileEventManager : MonoBehaviour
             {
                 case "start":
                     // TODO
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，获得 $800");
+                    ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，获得 $800");
                     break;
                 case "market":
                     // TODO 资源购买Panle
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
+                    ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
                     break;
                 case "pirate":
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
+                    ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
                     // TODO
                     break;
                 case "villager":
                     PlayerManager.Instance.EarnMoney(player, 300);
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
+                    ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
                     break;
                 case "resource":
                     // TODO 是否改成协程模式
                     PlayerManager.Instance.AddRandomResource(player);
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
+                    ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
                     break;
                 default:
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile?.name ?? "空白"} 格子");
+                    ShowEventInfo($"\n{player.name} 落在了 {tile?.name ?? "空白"} 格子");
                     break;
             }
         }
@@ -114,10 +133,10 @@ public class TileEventManager : MonoBehaviour
     #region Panel button
     public IEnumerator ShowUpgradePanel(Player player, Tile tile)
     {
-        UIManager.Instance.ShowPurchasePanelText($"{player.name}，是否花费 ${tile.upgradeCosts[tile.level]} 升级 {tile.name}?");
+        ShowPurchasePanelText($"{player.name}，是否花费 ${tile.upgradeCosts[tile.level]} 升级 {tile.name}?");
         decisionMade = false;
         buyDecision = false;
-        UIManager.Instance.SetPurchasePanelActive(true);
+        SetPurchasePanelActive(true);
 
         while (!decisionMade)
         {
@@ -132,27 +151,27 @@ public class TileEventManager : MonoBehaviour
                 PlayerManager.Instance.SpendMoney(player, tile.upgradeCosts[tile.level]);
                 TileManager.Instance.UpgradeTile(tile);
 
-                UIManager.Instance.ShowEventInfo($"\n{player.name} 升级了 {tile.name}。");
+                ShowEventInfo($"\n{player.name} 升级了 {tile.name}。花费了 ${tile.upgradeCosts[tile.level]}");
             }
             else
             {
-                UIManager.Instance.ShowEventInfo($"\n{player.name} 资金不足，无法升级 {tile.name}。");
+                ShowEventInfo($"\n{player.name} 资金不足，无法升级 {tile.name}。");
             }
         }
         else
         {
-            UIManager.Instance.ShowEventInfo($"\n{player.name} 放弃了升级 {tile.name}。");
+            ShowEventInfo($"\n{player.name} 放弃了升级 {tile.name}。");
         }
-        UIManager.Instance.SetPurchasePanelActive(false);
+        SetPurchasePanelActive(false);
     }
 
     public IEnumerator ShowPurchasePanel(Player player, TileData tileData)
     {
         Tile tile = tileData.tile;
-        UIManager.Instance.ShowPurchasePanelText($"{player.name}, 是否购买 {tile.name}\n价格: ${tile.price}?");
+        ShowPurchasePanelText($"{player.name}, 是否购买 {tile.name}\n价格: ${tile.price}?");
         decisionMade = false;
         buyDecision = false;
-        UIManager.Instance.SetPurchasePanelActive(true);
+        SetPurchasePanelActive(true);
 
         while (!decisionMade)
         {
@@ -166,18 +185,18 @@ public class TileEventManager : MonoBehaviour
                 PlayerManager.Instance.SpendMoney(player, tile.price);
                 TileManager.Instance.ownerTile(tileData, player.playerIndex, player.playerColor);
                 
-                UIManager.Instance.ShowEventInfo($"\n{player.name} 购买了 {tile.name}");
+                ShowEventInfo($"\n{player.name} 购买了 {tile.name}， 花费了 ${tile.price}");
             }
             else
             {
-                UIManager.Instance.ShowEventInfo($"\n{player.name} 资金不足，无法购买 {tile.name}");
+                ShowEventInfo($"\n{player.name} 资金不足，无法购买 {tile.name}");
             }
         }
         else
         {
-            UIManager.Instance.ShowEventInfo($"\n{player.name} 放弃了购买 {tile.name}");
+            ShowEventInfo($"\n{player.name} 放弃了购买 {tile.name}");
         }
-        UIManager.Instance.SetPurchasePanelActive(false);
+        SetPurchasePanelActive(false);
     }
 
     
@@ -218,42 +237,42 @@ public class TileEventManager : MonoBehaviour
         switch (eventIndex)
         {
             case 0:
-                UIManager.Instance.ShowEventInfo("\n发现新商路：恭喜你发现一条通往神秘地区的新商路，可抽取一张资源卡。");
+                ShowEventInfo("\n发现新商路：恭喜你发现一条通往神秘地区的新商路，可抽取一张资源卡。");
                 yield return StartCoroutine(HandleResourceEvent(player, 0));
                 break;
             case 1:
-                UIManager.Instance.ShowEventInfo("\n文化交流：你成功与当地商人进行了文化交流，他们对你的慷慨和见识表示赞赏，赠送你500金。");
+                ShowEventInfo("\n文化交流：你成功与当地商人进行了文化交流，他们对你的慷慨和见识表示赞赏，赠送你500金。");
                 PlayerManager.Instance.EarnMoney(player, 500);
                 break;
             case 2:
-                UIManager.Instance.ShowEventInfo("\n获得资助：一位富有的贵族看中了你的商业潜力，决定资助你，获得 800 金币。");
+                ShowEventInfo("\n获得资助：一位富有的贵族看中了你的商业潜力，决定资助你，获得 800 金币。");
                 PlayerManager.Instance.EarnMoney(player, 800);
                 break;
             case 3:
-                UIManager.Instance.ShowEventInfo("\n发现遗迹：在探索途中，你发现了一处古老遗迹，从中找到珍贵文物，换回一个地皮（自选不大于500金的地皮）。");
+                ShowEventInfo("\n发现遗迹：在探索途中，你发现了一处古老遗迹，从中找到珍贵文物，换回一个地皮（自选不大于500金的地皮）。");
                 // TODO
                 break;
             case 4:
-                UIManager.Instance.ShowEventInfo("\n幸运之神眷顾：幸运之神降临，接下来三个回合，你掷骰子的点数 +1。");
+                ShowEventInfo("\n幸运之神眷顾：幸运之神降临，接下来三个回合，你掷骰子的点数 +1。");
                 // TODO
                 break;
             case 5:
-                UIManager.Instance.ShowEventInfo("\n丰收之年：途经的地区迎来丰收，你收购到大量低价优质资源，抽取两张资源卡。");
+                ShowEventInfo("\n丰收之年：途经的地区迎来丰收，你收购到大量低价优质资源，抽取两张资源卡。");
                 for (int i = 0; i < 2; i++)
                 {
                     yield return StartCoroutine(HandleResourceEvent(player, 0));
                 }
                 break;
             case 6:
-                UIManager.Instance.ShowEventInfo("\n学会新技术：在当地学习到一种独特的制作工艺，收益700金。");
+                ShowEventInfo("\n学会新技术：在当地学习到一种独特的制作工艺，收益700金。");
                 PlayerManager.Instance.EarnMoney(player, 700);
                 break;
             case 7:
-                UIManager.Instance.ShowEventInfo("\n获得推荐信：得到当地一位重要人物的推荐信，可以免费在自己的地皮上加盖商铺。");
+                ShowEventInfo("\n获得推荐信：得到当地一位重要人物的推荐信，可以免费在自己的地皮上加盖商铺。");
                 // TODO
                 break;
             case 8:
-                UIManager.Instance.ShowEventInfo("\n新贸易伙伴：结识了一位远方的贸易伙伴，给你带来了一张资源卡和300金。");
+                ShowEventInfo("\n新贸易伙伴：结识了一位远方的贸易伙伴，给你带来了一张资源卡和300金。");
                 yield return StartCoroutine(HandleResourceEvent(player, 0));
                 PlayerManager.Instance.EarnMoney(player, 300);
                 break;
@@ -266,29 +285,29 @@ public class TileEventManager : MonoBehaviour
         switch (eventIndex)
         {
             case 0:
-                UIManager.Instance.ShowEventInfo("\n遭遇风沙：不幸遭遇强烈风沙，暂停下一回合行动，且损失 200 金币用于清理货物和修复商队装备。");
+                ShowEventInfo("\n遭遇风沙：不幸遭遇强烈风沙，暂停下一回合行动，且损失 200 金币用于清理货物和修复商队装备。");
                 PlayerManager.Instance.SpendMoney(player, 200);
                 break;
             case 1:
-                UIManager.Instance.ShowEventInfo("\n强盗袭击：一群强盗抢走了你部分财物，损失 300 金币和一张资源卡。");
+                ShowEventInfo("\n强盗袭击：一群强盗抢走了你部分财物，损失 300 金币和一张资源卡。");
                 yield return StartCoroutine(HandleResourceEvent(player, 1));
                 PlayerManager.Instance.SpendMoney(player, 300);
                 break;
             case 2:
-                UIManager.Instance.ShowEventInfo("\n迷路：在沙漠中迷失方向，后退三格，浪费一回合时间寻找方向。");
+                ShowEventInfo("\n迷路：在沙漠中迷失方向，后退三格，浪费一回合时间寻找方向。");
                 // TODO
                 break;
             case 3:
-                UIManager.Instance.ShowEventInfo("\n疾病流行：所在地区疾病流行，你的商队人员受到影响，下一回合无法建造建筑，且需花费 200 金币治疗。");
+                ShowEventInfo("\n疾病流行：所在地区疾病流行，你的商队人员受到影响，下一回合无法建造建筑，且需花费 200 金币治疗。");
                 PlayerManager.Instance.SpendMoney(player, 200);
                 // TODO
                 break;
             case 4:
-                UIManager.Instance.ShowEventInfo("\n税收增加：当地政府临时增加税收，缴纳当前所拥有金币的 5% 作为税款。");
+                ShowEventInfo("\n税收增加：当地政府临时增加税收，缴纳当前所拥有金币的 5% 作为税款。");
                 PlayerManager.Instance.SpendMoney(player, (int)(player.money * 0.05f));
                 break;
             case 5:
-                UIManager.Instance.ShowEventInfo("\n竞争对手破坏：竞争对手暗中破坏你的生意，拆除你在当前城市一座等级最低的建筑。");
+                ShowEventInfo("\n竞争对手破坏：竞争对手暗中破坏你的生意，拆除你在当前城市一座等级最低的建筑。");
                 // TODO
                 break;
         }
@@ -318,5 +337,22 @@ public class TileEventManager : MonoBehaviour
     #endregion
 
     
+    #region UI
+
+    public void ShowPurchasePanelText(string message)
+    {
+        purchasePanelText.text = message;
+    }
+
+    public void SetPurchasePanelActive(bool active)
+    {
+        purchasePanel.SetActive(active);
+    }
+    
+    public void ShowEventInfo(string message)
+    {
+        eventInfoText.text = message;
+    }
+    #endregion
     
 }

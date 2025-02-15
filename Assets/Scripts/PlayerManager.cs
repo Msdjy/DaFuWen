@@ -14,6 +14,11 @@ public class PlayerManager : MonoBehaviour
     public GameObject playerPrefab;
     public MapManager mapManager;
 
+    
+    public Text leftPlayerInfoText;
+    public Text rightPlayerInfoText;
+
+
     #region Create 
 
     void Awake()
@@ -120,7 +125,7 @@ public class PlayerManager : MonoBehaviour
         string playerInfo1  = GeneratePlayerInfoText(players[0]);
         string playerInfo2 = GeneratePlayerInfoText(players[1]);
 
-        UIManager.Instance.ShowPlayerInfo(playerInfo1, playerInfo2, players[0].playerColor, players[1].playerColor);
+        ShowPlayerInfo(playerInfo1, playerInfo2, players[0].playerColor, players[1].playerColor);
     }
     #endregion
 
@@ -137,7 +142,6 @@ public class PlayerManager : MonoBehaviour
         player1.SpendMoney(rent);
         player2.EarnMoney(rent);
         UpdatePlayerInfoText();
-        UIManager.Instance.ShowEventInfo($"\n{player1.name} 向 {player2.name} 支付了租金 ${rent}");
     }
 
     #endregion
@@ -148,14 +152,12 @@ public class PlayerManager : MonoBehaviour
     {
         player.SpendMoney(amount);
         UpdatePlayerInfoText();
-        UIManager.Instance.ShowEventInfo($"\n{player.name} 花费了 ${amount}");
     }
     // 玩家x获得了钱
     public void EarnMoney(Player player, int amount)
     {
         player.EarnMoney(amount);
         UpdatePlayerInfoText();
-        UIManager.Instance.ShowEventInfo($"\n{player.name} 获得了 ${amount}");
     }
     // 判断玩家钱是否够
     public bool CanPlayerAfford(Player player, int amount)
@@ -170,13 +172,11 @@ public class PlayerManager : MonoBehaviour
     public void AddResource(Player player, ResourceType type, int quantity)
     {
         player.AddResource(type, quantity);
-        UIManager.Instance.ShowEventInfo($"\n{player.name} 获得了 {quantity} 张 {type} 资源卡");
     }
     // 玩家X失去资源
     public void RemoveResource(Player player, ResourceType type, int quantity)
     {
         player.RemoveResource(type, quantity);
-        UIManager.Instance.ShowEventInfo($"\n{player.name} 失去了 {quantity} 张 {type} 资源卡");
     }
     // 玩家X随机失去资源
     public void RemoveRandomResource(Player player)
@@ -185,14 +185,13 @@ public class PlayerManager : MonoBehaviour
         if (player.resources.Sum(r => r.Value.Count) == 0) 
         {
             // show text
-            UIManager.Instance.ShowEventInfo($"\n{player.name} 没有资源卡");
+            // ShowEventInfo($"\n{player.name} 没有资源卡");
             return;
         }
         // 失去的资源type
         ResourceType randomType = player.resources.Keys.ElementAt(UnityEngine.Random.Range(0, player.resources.Count));
         // 此类资源失去一个
         player.RemoveResource(randomType, 1);
-        UIManager.Instance.ShowEventInfo($"\n{player.name} 失去了 1 张 {randomType} 资源卡");
     }
     // 玩家X随机获得资源
     public void AddRandomResource(Player player)
@@ -200,7 +199,6 @@ public class PlayerManager : MonoBehaviour
         // 不同type的资源获得概率相同
         ResourceType randomType = (ResourceType)UnityEngine.Random.Range(0, Enum.GetValues(typeof(ResourceType)).Length);
         player.AddResource(randomType, 1);
-        UIManager.Instance.ShowEventInfo($"\n{player.name} 获得了 1 张 {randomType} 资源卡");
     }
     // 获取玩家X某资源的数量
     public int GetResourceCount(Player player, ResourceType type)
@@ -211,6 +209,19 @@ public class PlayerManager : MonoBehaviour
     public int GetAllResourceCount(Player player)
     {
         return player.resources.Sum(r => r.Value.Count);
+    }
+    #endregion
+
+
+    #region UI
+    
+    public void ShowPlayerInfo(string playerInfo1, string playerInfo2, Color playerColor1, Color playerColor2)
+    {
+        leftPlayerInfoText.text = playerInfo1;
+        rightPlayerInfoText.text = playerInfo2;
+
+        leftPlayerInfoText.color = playerColor1;
+        rightPlayerInfoText.color = playerColor2;
     }
     #endregion
 }

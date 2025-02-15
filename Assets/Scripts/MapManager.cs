@@ -15,9 +15,7 @@ public class MapManager : MonoBehaviour
     public float spacing = 2.0f;
     [Tooltip("Tile 在 Y 轴上的偏移")]
     public float yOffset = 0f;
-    // Font asset reference for TextMeshPro
-    [Tooltip("TextMeshPro 字体文件")]
-    public TMP_FontAsset customFont;
+
     #endregion
 
     #region Runtime Data
