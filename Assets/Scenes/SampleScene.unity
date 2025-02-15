@@ -912,7 +912,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 200}
+  m_AnchoredPosition: {x: 0, y: 100}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &741006150
@@ -962,15 +962,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1167,7 +1167,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jsonConfig: {fileID: 4900000, guid: 7d56641367c83ea4481465a808c0a863, type: 3}
-  tilePrefab: {fileID: 590362341472999617, guid: 9f9cdf504c1d783448f54d7d3f6fa566, type: 3}
   spacing: 2
   yOffset: 0
   customFont: {fileID: 11400000, guid: 8b113d3686488e84ba8bcf7ac21c8d2b, type: 2}
@@ -1176,8 +1175,7 @@ MonoBehaviour:
     rows: 0
     columns: 0
     tiles: []
-  tileIds: 
-  tilePositions: []
+  tileIndex2Id: 
 --- !u!1 &1013854460
 GameObject:
   m_ObjectHideFlags: 0
@@ -1348,8 +1346,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 0, y: 200}
+  m_SizeDelta: {x: 200, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1104973484
 MonoBehaviour:
@@ -1398,15 +1396,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1823,6 +1821,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308140669}
   m_CullTransparentMesh: 1
+--- !u!1 &1346845719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1346845721}
+  - component: {fileID: 1346845720}
+  m_Layer: 0
+  m_Name: TileManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1346845720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1346845719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29b902a2deb608c4aa2541a298007d17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilePrefab: {fileID: 590362341472999617, guid: 9f9cdf504c1d783448f54d7d3f6fa566, type: 3}
+  cityLevel1Prefab: {fileID: 9050355663520557145, guid: c739c76c35c302d4197b2f1564db770a, type: 3}
+  cityLevel2Prefab: {fileID: 4319370092692084657, guid: 030a2f7bdcb5c544987af7a6483e1613, type: 3}
+  cityLevel3Prefab: {fileID: 7855120341553819439, guid: 760d114db36ec18448ab054246e20888, type: 3}
+--- !u!4 &1346845721
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1346845719}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 760.0287, y: 544.2056, z: -5.2369943}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1417502946
 GameObject:
   m_ObjectHideFlags: 0
@@ -2053,8 +2099,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1294377445}
   playerManager: {fileID: 1896298797}
-  purchasePanel: {fileID: 1588605882}
-  purchasePanelText: {fileID: 1308140671}
   resourceManager: {fileID: 259320586}
   buyButton: {fileID: 6069596}
   skipButton: {fileID: 573975999}
@@ -2474,12 +2518,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 215a0c5f0f55d6f44acd73614e97e850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infoText: {fileID: 741006150}
+  turnInfoText: {fileID: 741006150}
   purchasePanel: {fileID: 1588605882}
   purchasePanelText: {fileID: 1308140671}
   eventInfoText: {fileID: 1104973484}
-  buyButton: {fileID: 6069596}
-  skipButton: {fileID: 573975999}
   leftPlayerInfoText: {fileID: 1729276865}
   rightPlayerInfoText: {fileID: 1146803953}
 --- !u!4 &2029874468
@@ -2636,13 +2678,14 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1294377444}
   - {fileID: 942201120}
+  - {fileID: 1346845721}
   - {fileID: 1896298798}
   - {fileID: 1624375264}
   - {fileID: 259320587}
-  - {fileID: 937958493}
   - {fileID: 2029874468}
   - {fileID: 1175740110}
   - {fileID: 4877364059242994940}
+  - {fileID: 937958493}
   - {fileID: 1903094382153416617}
   - {fileID: 1821288858}
   - {fileID: 224666264}

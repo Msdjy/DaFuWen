@@ -17,4 +17,15 @@ public class Tile
     // 提供一些对外可访问的方法
     public bool CanUpgrade() => level < upgradeCosts.Length;
     public bool CanPurchase() => owner == -1;
+
+    // 城市升级
+    public void Upgrade()
+    {
+        level++;
+    }
+    // 城市被购买
+    public void updateOwner(int playerIndex)
+    {   
+        owner = playerIndex;
+    }
 }

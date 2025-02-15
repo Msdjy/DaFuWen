@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public PlayerManager playerManager;
     public TileEventManager tileEventManager;
     public Button rollDiceButton;
-    public List<TileController> boardTiles = new List<TileController>();
+    // public List<TileController> boardTiles = new List<TileController>();
 
     IEnumerator Start()
     {
@@ -21,25 +21,25 @@ public class GameManager : MonoBehaviour
 
     private void SetupGame()
     {
-        boardTiles = GetSortedTileControllers();
+        // boardTiles = GetSortedTileControllers();
         rollDiceButton.onClick.AddListener(() => StartCoroutine(TakeTurn()));
         playerManager.InitializePlayers();
         tileEventManager.gameManager = this;
         tileEventManager.playerManager = playerManager;
 
-        foreach (var tile in boardTiles)
-        {
-            tile.tileEventManager = tileEventManager;
-        }
+        // foreach (var tile in boardTiles)
+        // {
+        //     tile.tileEventManager = tileEventManager;
+        // }
 
         // UpdateInfoText();
-        StartCoroutine(tileEventManager.AutoBuyAndUpgradeCity(0, 1));
+        StartCoroutine(TileManager.Instance.AutoBuyAndUpgradeCity(playerManager.GetPlayerByIndex(0), 1));
     }
 
-    private List<TileController> GetSortedTileControllers()
-    {
-        return FindObjectsOfType<TileController>().OrderBy(t => t.tileIndex).ToList();
-    }
+    // private List<TileController> GetSortedTileControllers()
+    // {
+    //     return FindObjectsOfType<TileController>().OrderBy(t => t.tileIndex).ToList();
+    // }
 
     private IEnumerator TakeTurn()
     {

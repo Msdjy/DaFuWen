@@ -8,12 +8,25 @@ using System;
 
 public class PlayerManager : MonoBehaviour
 {
+    public static PlayerManager Instance;
     public List<Player> players = new List<Player>();
     public int currentPlayerIndex = 0;
     public GameObject playerPrefab;
     public MapManager mapManager;
 
     #region Create 
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     public void InitializePlayers()
     {
         for (int i = 0; i < 2; i++)
@@ -34,7 +47,7 @@ public class PlayerManager : MonoBehaviour
         };
         newPlayer.InitializeResources();
 
-        Vector3 startPos = mapManager.GetTilePosition(newPlayer.currentTileIndex);
+        Vector3 startPos = TileManager.Instance.GetTileDataPositionByIndex(newPlayer.currentTileIndex);
         GameObject avatar = Instantiate(playerPrefab, startPos, Quaternion.identity);
         newPlayer.avatar = avatar;
 
@@ -82,6 +95,7 @@ public class PlayerManager : MonoBehaviour
     #region Move 
     public Player GetCurrentPlayer() => players[currentPlayerIndex];
 
+
     public IEnumerator MovePlayer(Player player, int steps)
     {
         yield return StartCoroutine(player.MoveTo(mapManager, steps)); // 调用Player类中的MoveTo方法
@@ -107,6 +121,34 @@ public class PlayerManager : MonoBehaviour
         string playerInfo2 = GeneratePlayerInfoText(players[1]);
 
         UIManager.Instance.ShowPlayerInfo(playerInfo1, playerInfo2, players[0].playerColor, players[1].playerColor);
+    }
+    #endregion
+
+
+    #region Update
+    // 根据index获取玩家
+    public Player GetPlayerByIndex(int index) => players[index];
+    // 玩家1为玩家2支付租金
+    public void PayRent(int playerIndex1, int playerIndex2, int rent)
+    {
+        Player player1 = GetPlayerByIndex(playerIndex1);
+        Player player2 = GetPlayerByIndex(playerIndex2);
+
+        player1.SpendMoney(rent);
+        player2.EarnMoney(rent);
+        UIManager.Instance.ShowEventInfo($"\n{player1.name} 向 {player2.name} 支付了租金 ${rent}");
+    }
+
+    // 玩家X花费了钱
+    public void SpendMoney(Player player, int amount)
+    {
+        player.SpendMoney(amount);
+        UIManager.Instance.ShowEventInfo($"\n{player.name} 花费了 ${amount}");
+    }
+    // 判断玩家钱是否够
+    public bool CanPlayerAfford(Player player, int amount)
+    {
+        return player.money >= amount;
     }
     #endregion
 }

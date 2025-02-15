@@ -10,7 +10,7 @@ public class Player
     public string name;
     public int money;
     /// <summary>
-    /// 当前玩家所在的 Tile 索引（对应 MapManager.tilePositions 中的下标）
+    /// 当前玩家所在的 Tile 索引（）
     /// </summary>
     public int currentTileIndex;
     public GameObject avatar;
@@ -60,8 +60,11 @@ public class Player
     {
         for (int i = 0; i < steps; i++)
         {
-            currentTileIndex = (currentTileIndex + 1) % mapManager.tilePositions.Count;
-            Vector3 targetPos = mapManager.tilePositions[currentTileIndex];
+            
+            currentTileIndex = (currentTileIndex + 1) % TileManager.Instance.GetTilesCount();
+            // Vector3 targetPos = mapManager.tileInnerPosition[currentTileIndex];
+            // 通过index查询tile pos
+            Vector3 targetPos = TileManager.Instance.GetTileDataPositionByIndex(currentTileIndex);
 
             while (Vector3.Distance(avatar.transform.position, targetPos) > 0.1f)
             {
@@ -71,4 +74,17 @@ public class Player
             yield return new WaitForSeconds(0.1f);
         }
     }
+
+    // 玩家花费了钱
+    public void SpendMoney(int amount)
+    {
+        money -= amount;
+    }
+    // 玩家获得了钱
+    public void EarnMoney(int amount)
+    {
+        money += amount;
+    }
+
+    // 获取当前玩家
 }

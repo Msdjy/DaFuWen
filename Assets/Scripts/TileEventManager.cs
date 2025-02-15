@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,86 +26,46 @@ public class TileEventManager : MonoBehaviour
         UIManager.Instance.ShowEventInfo("");
     }
 
-    // 自动购买并升级指定城市
-    public IEnumerator AutoBuyAndUpgradeCity(int playerIndex, int tileIndex)
-    {
-        Player player = playerManager.players[playerIndex];
-        int tileID = gameManager.mapManager.tileIds[tileIndex];
-        TileController tile = gameManager.boardTiles.Find(t => t.tileIndex == tileID);
-
-        if (tile == null)
-            yield break;
-
-        // 自动购买城市
-        if (tile.owner < 0 && player.money >= tile.tileData.price)
-        {
-            tile.owner = playerIndex;
-            player.money -= tile.tileData.price;
-            tile.UpdateTileText();
-            UIManager.Instance.ShowEventInfo($"{player.name} 自动购买了 {tile.tileData.name}");
-
-            MeshRenderer cubeRenderer = tile.GetComponentInChildren<MeshRenderer>();
-            if (cubeRenderer != null)
-            {
-                cubeRenderer.material.color = player.playerColor;
-            }
-
-            // 自动升级城市
-            for (int i = 0; i < 3; i++)
-            {
-                if (player.money >= tile.tileData.upgradeCosts[tile.tileData.level])
-                {
-                    tile.UpgradeCity(player);
-                    yield return new WaitForSeconds(1);
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-        else
-        {
-            UIManager.Instance.ShowEventInfo($"{player.name} 无法购买 {tile.tileData.name}，资金不足或该城市已经被购买");
-        }
-    }
 
     // 处理玩家的回合逻辑
     public IEnumerator ProcessTileEvent(Player player, int tileIndex)
     {
-        int tileID = gameManager.mapManager.tileIds[tileIndex];
-        TileController tile = gameManager.boardTiles.Find(t => t.tileIndex == tileID);
-        if (tile == null)
-            yield break;
+        // int tileID = gameManager.mapManager.tileIndex2Id[tileIndex];
+        // TileController tile = gameManager.boardTiles.Find(t => t.tileIndex == tileID);
+        TileData tileData = TileManager.Instance.GetTileDataByIndex(tileIndex);
+        Tile tile = tileData.tile;
 
-        if (tile.tileData != null && tile.tileData.type == "city")
+        // 如果是城市格子
+        if (tile != null && tile.type == "city")
         {
+            // 如果该城市没有被购买
             if (tile.owner < 0)
             {
-                yield return StartCoroutine(ShowPurchasePanel(player, tile));
+                yield return StartCoroutine(ShowPurchasePanel(player, tileData));
             }
+            // 如果该城市已经被其他玩家购买
             else if (tile.owner != playerManager.currentPlayerIndex)
             {
-                int rent = tile.tileData.rent;
-                player.money -= rent;
-                playerManager.players[tile.owner].money += rent;
-                UIManager.Instance.ShowEventInfo($"\n{player.name} 向 {playerManager.players[tile.owner].name} 支付了租金 ${rent}");
+                // 当前玩家向城市所有者支付租金
+                PlayerManager.Instance.PayRent(player.playerIndex, tile.owner, tile.rent);
+                PlayerManager.Instance.UpdatePlayerInfoText();
             }
+            // 如果该城市已经被当前玩家购买
             else
             {
-                if (tile.tileData.level < 3)
+                if (tile.level < 3)
                 {
                     yield return StartCoroutine(ShowUpgradePanel(player, tile));
                 }
                 else
                 {
-                    UIManager.Instance.ShowEventInfo($"{tile.tileData.name} 已经达到最大等级。");
+                    UIManager.Instance.ShowEventInfo($"{tile.name} 已经达到最大等级。");
                 }
             }
         }
-        else if (tile.tileData != null && tile.tileData.type == "event")
+        else if (tile != null && tile.type == "event")
         {
-            UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.tileData.name} 格子");
+            UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子");
             yield return StartCoroutine(TriggerEventCard(player));
         }
         else
@@ -115,39 +76,39 @@ public class TileEventManager : MonoBehaviour
         yield return null;
     }
 
-    private void HandleOtherTileTypes(Player player, TileController tile)
+    private void HandleOtherTileTypes(Player player, Tile tile)
     {
-        if (tile.tileData != null)
+        if (tile != null)
         {
-            switch (tile.tileData.type)
+            switch (tile.type)
             {
                 case "start":
                     player.money += 800;
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $800");
+                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，获得 $800");
                     break;
                 case "market":
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $500");
+                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，获得 $500");
                     break;
                 case "pirate":
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.tileData.name} 格子，失去 $500");
+                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，失去 $500");
                     break;
                 case "villager":
                     player.money += 300;
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $300");
+                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，获得 $300");
                     break;
                 case "resource":
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.tileData.name} 格子，获得 $200");
+                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，获得 $200");
                     break;
                 default:
-                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile.tileData?.name ?? "空白"} 格子");
+                    UIManager.Instance.ShowEventInfo($"\n{player.name} 落在了 {tile?.name ?? "空白"} 格子");
                     break;
             }
         }
     }
 
-    public IEnumerator ShowUpgradePanel(Player player, TileController tile)
+    public IEnumerator ShowUpgradePanel(Player player, Tile tile)
     {
-        UIManager.Instance.ShowPurchasePanelText($"{player.name}，是否花费 ${tile.tileData.upgradeCosts[tile.tileData.level]} 升级 {tile.tileData.name}?");
+        UIManager.Instance.ShowPurchasePanelText($"{player.name}，是否花费 ${tile.upgradeCosts[tile.level]} 升级 {tile.name}?");
         decisionMade = false;
         buyDecision = false;
         UIManager.Instance.SetPurchasePanelActive(true);
@@ -159,18 +120,31 @@ public class TileEventManager : MonoBehaviour
 
         if (buyDecision)
         {
-            tile.UpgradeCity(player); // 触发城市升级
+            // 玩家钱够
+            if (PlayerManager.Instance.CanPlayerAfford(player, tile.upgradeCosts[tile.level]))
+            {
+                PlayerManager.Instance.SpendMoney(player, tile.upgradeCosts[tile.level]);
+                PlayerManager.Instance.UpdatePlayerInfoText();
+                TileManager.Instance.UpgradeTile(tile);
+
+                UIManager.Instance.ShowEventInfo($"\n{player.name} 升级了 {tile.name}。");
+            }
+            else
+            {
+                UIManager.Instance.ShowEventInfo($"\n{player.name} 资金不足，无法升级 {tile.name}。");
+            }
         }
         else
         {
-            UIManager.Instance.ShowEventInfo($"\n{player.name} 放弃了升级 {tile.tileData.name}。");
+            UIManager.Instance.ShowEventInfo($"\n{player.name} 放弃了升级 {tile.name}。");
         }
         UIManager.Instance.SetPurchasePanelActive(false);
     }
 
-    public IEnumerator ShowPurchasePanel(Player player, TileController tile)
+    public IEnumerator ShowPurchasePanel(Player player, TileData tileData)
     {
-        UIManager.Instance.ShowPurchasePanelText($"{player.name}, 是否购买 {tile.tileData.name}\n价格: ${tile.tileData.price}?");
+        Tile tile = tileData.tile;
+        UIManager.Instance.ShowPurchasePanelText($"{player.name}, 是否购买 {tile.name}\n价格: ${tile.price}?");
         decisionMade = false;
         buyDecision = false;
         UIManager.Instance.SetPurchasePanelActive(true);
@@ -182,27 +156,27 @@ public class TileEventManager : MonoBehaviour
 
         if (buyDecision)
         {
-            if (player.money >= tile.tileData.price)
+            if (PlayerManager.Instance.CanPlayerAfford(player, tile.price))
             {
-                player.money -= tile.tileData.price;
-                tile.owner = playerManager.currentPlayerIndex;
-                tile.UpdateTileText();
-                UIManager.Instance.ShowEventInfo($"\n{player.name} 购买了 {tile.tileData.name}");
+                PlayerManager.Instance.SpendMoney(player, tile.price);
+                TileManager.Instance.ownerTile(tileData, player.playerIndex, player.playerColor);
+                
+                UIManager.Instance.ShowEventInfo($"\n{player.name} 购买了 {tile.name}");
 
-                MeshRenderer cubeRenderer = tile.GetComponentInChildren<MeshRenderer>();
-                if (cubeRenderer != null)
-                {
-                    cubeRenderer.material.color = player.playerColor;
-                }
+                // MeshRenderer cubeRenderer = tile.GetComponentInChildren<MeshRenderer>();
+                // if (cubeRenderer != null)
+                // {
+                //     cubeRenderer.material.color = player.playerColor;
+                // }
             }
             else
             {
-                UIManager.Instance.ShowEventInfo($"\n{player.name} 资金不足，无法购买 {tile.tileData.name}");
+                UIManager.Instance.ShowEventInfo($"\n{player.name} 资金不足，无法购买 {tile.name}");
             }
         }
         else
         {
-            UIManager.Instance.ShowEventInfo($"\n{player.name} 放弃了购买 {tile.tileData.name}");
+            UIManager.Instance.ShowEventInfo($"\n{player.name} 放弃了购买 {tile.name}");
         }
         UIManager.Instance.SetPurchasePanelActive(false);
     }

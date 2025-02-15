@@ -9,8 +9,8 @@ public class MapManager : MonoBehaviour
     [Header("地图配置")]
     [Tooltip("将 JSON 地图配置文件拖拽到此处")]
     public TextAsset jsonConfig;
-    [Tooltip("用于生成 Tile 的预制体（内容为 Cube）")]
-    public GameObject tilePrefab;
+    // [Tooltip("用于生成 Tile 的预制体（内容为 Cube）")]
+    // public GameObject tilePrefab;
     [Tooltip("Tile 之间的间距（此参数不再直接用于位置计算）")]
     public float spacing = 2.0f;
     [Tooltip("Tile 在 Y 轴上的偏移")]
@@ -24,20 +24,20 @@ public class MapManager : MonoBehaviour
     [HideInInspector]
     public MapConfig config;
     [HideInInspector]
-    public List<int> tileIds = new List<int>();
+    public List<int> tileIndex2Id = new List<int>();
+    // TODO 这个tileIndex2Id后续也去掉，用TileManager的管理
     /// <summary>
     /// 内圈（逻辑）位置（延法向量 1 个单位后的位置）
     /// </summary>
-    [HideInInspector]
-    public List<Vector3> tilePositions = new List<Vector3>();
+
     #endregion
 
     #region Unity Methods
     void Start()
     {
-        if (jsonConfig == null || tilePrefab == null)
+        if (jsonConfig == null)
         {
-            Debug.LogError("未指定配置文件或 Tile 预制体！");
+            Debug.LogError("未指定配置文件！");
             return;
         }
 
@@ -50,33 +50,17 @@ public class MapManager : MonoBehaviour
 
         Debug.Log($"Rows: {config.rows}, Columns: {config.columns}, Map Count: {config.map.Count}");
 
-        tileIds.Clear();
-        tilePositions.Clear();
+        tileIndex2Id.Clear();
+        // tileInnerPosition.Clear();
 
         GenerateMap();
 
-        Debug.Log("Tile IDs: " + string.Join(", ", tileIds));
-        Debug.Log("Tile Inner Positions: " + string.Join(", ", tilePositions.Select(p => p.ToString()).ToArray()));
-    }
-    #endregion
-
-    #region Position
-    // 获取指定 Tile 索引的坐标
-    public Vector3 GetTilePosition(int tileIndex)
-    {
-        if (tileIndex >= 0 && tileIndex < tilePositions.Count)
-        {
-            return tilePositions[tileIndex];
-        }
-        Debug.LogError($"Tile index {tileIndex} is out of range.");
-        return Vector3.zero;
+        Debug.Log("Tile IDs: " + string.Join(", ", tileIndex2Id));
+        // Debug.Log("Tile Inner Positions: " + string.Join(", ", tileInnerPosition.Select(p => p.ToString()).ToArray()));
     }
     #endregion
 
     #region Map Generation
-
-
-
     /// <summary>
     /// 生成地图：只生成棋盘边缘的 Tile，
     /// 顺序：从右下角开始，沿边界顺时针遍历（角点只生成一次）。
@@ -107,8 +91,6 @@ public class MapManager : MonoBehaviour
             CreateTile(r, config.columns - 1);
         }
     }
-
-    
     #endregion
 
     #region Tile Generation
@@ -126,8 +108,7 @@ public class MapManager : MonoBehaviour
     {
         int index = r * config.columns + c;
         int tileId = config.map[index];
-        if (tileId == 0)
-            return;
+        if (tileId == 0) return;
 
         // 确保 tiles 列表不为空
         if (config.tiles == null || config.tiles.Count == 0)
@@ -135,93 +116,31 @@ public class MapManager : MonoBehaviour
             Debug.LogError("地图配置文件中的 tiles 数据为空！");
             return;
         }
-
-        // 分别计算内圈和外圈位置
-        Vector3 innerPosition = GetInnerPosition(r, c);
-        // 记录内圈位置
-        tileIds.Add(tileId);
-        tilePositions.Add(innerPosition);
-
+        
         // 查找对应的 Tile 数据
-        Tile tileData = config.tiles.FirstOrDefault(t => t.id == tileId);
-        if (tileData == null)
+        Tile tile = config.tiles.FirstOrDefault(t => t.id == tileId);
+        if (tile == null)
         {
             Debug.LogError($"未找到与 Tile ID {tileId} 对应的 Tile 数据！");
             return;
         }
 
+        // 分别计算内圈和外圈位置
+        Vector3 innerPosition = GetInnerPosition(r, c);
+        // 记录内圈位置
+        tileIndex2Id.Add(tileId);
+
         Vector3 outerPosition = GetOuterPosition(r, c);
-        GameObject tileObj = Instantiate(tilePrefab, outerPosition, Quaternion.identity);
-        tileObj.transform.localScale *= 1.44f;
-
-        TileController tc = tileObj.AddComponent<TileController>();
-        tc.tileData = tileData;
-        tc.tileIndex = tileId;
-        InitTileColor(tileObj, tileData);
-        // CreateTileText(tileObj, tileData, tileId);
-
-        Debug.Log("生成 Tile: " + (tileData != null ? tileData.name : tileId.ToString()));
-        Debug.Log($"tileData: id={tileData.id}, name={tileData.name}, type={tileData.type}, price={tileData.price}");
+        // GameObject tileObj = Instantiate(tilePrefab, outerPosition, Quaternion.identity);
+        
+        TileManager.Instance.RegisterTile(tile, innerPosition, outerPosition);  // 将Tile注册到TileManager
 
     }
 
-    private void InitTileColor(GameObject tileObj, Tile tileData)
-    {
-        MeshRenderer cubeRenderer = tileObj.GetComponentInChildren<MeshRenderer>();
-        if (cubeRenderer != null)
-        {
-            Color tileColor = Color.white;
-            switch (tileData.type)
-            {
-                case "event":
-                    tileColor = Color.blue;
-                    break;
-                case "start":
-                    tileColor = Color.yellow;
-                    break;
-                case "market":
-                    tileColor = Color.green;
-                    break;
-                case "pirate":
-                    tileColor = Color.black;
-                    break;
-                case "villager":
-                    tileColor = Color.cyan;
-                    break;
-                case "resource":
-                    tileColor = Color.magenta;
-                    break;
-            }
-            cubeRenderer.material.color = tileColor;
-        }
-    }
+    #endregion
 
-    private void CreateTileText(GameObject tileObj, Tile tileData, int index)
-    {
-        GameObject textObj = new GameObject("TileText");
-        textObj.transform.SetParent(tileObj.transform);
-        textObj.transform.localPosition = new Vector3(0, 1.5f, 0);
-        textObj.transform.localRotation = Quaternion.Euler(90, 0, 0);
-        textObj.transform.localScale = Vector3.one;
 
-        TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
-        tmp.text = tileData != null ? $"{tileData.name}\nUnowned" : $"Index: {index}\nUnowned";
-        tmp.fontSize = 4;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.black;
-
-        if (customFont != null)
-        {
-            tmp.font = customFont;
-        }
-
-        TileController tc = tileObj.GetComponent<TileController>();
-        if (tc != null)
-        {
-            tc.tileText = tmp;
-            tc.UpdateTileText();
-        }
-    }
+    #region Position Calculation
 
     private Vector3 GetInnerPosition(int r, int c)
     {
