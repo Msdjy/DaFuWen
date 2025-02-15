@@ -11,20 +11,16 @@ public enum ResourceType
     Herbs
 }
 
-public interface IResource
-{
-    void ApplyResource(Player player);
-}
-
 public class ResourceCard
 {
     public ResourceType resourceType;
-    public int quantity;
+    
+    // name 细分资源子种类
+    public string name;
 
-    public ResourceCard(ResourceType type, int quantity = 1)
+    public ResourceCard(ResourceType type)
     {
         resourceType = type;
-        this.quantity = quantity;
     }
 }
 

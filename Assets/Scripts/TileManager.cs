@@ -73,7 +73,7 @@ public class TileManager : MonoBehaviour
                     tileColor = Color.yellow;
                     break;
                 case "market":
-                    tileColor = Color.green;
+                    tileColor = Color.blue;
                     break;
                 case "pirate":
                     tileColor = Color.black;
@@ -119,7 +119,6 @@ public class TileManager : MonoBehaviour
         if (tile.CanUpgrade())
         {
             tile.Upgrade();
-            // TODO tile model 升级
             UpgradeCityModel(tile);
             Debug.Log($"Tile {name} 升级到了 {tile.level} 级");
         }

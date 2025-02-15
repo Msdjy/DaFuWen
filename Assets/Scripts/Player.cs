@@ -25,6 +25,7 @@ public class Player
     // 新增的字段：玩家的颜色
     public Color playerColor;
 
+    #region resource
     // 初始化资源
     public void InitializeResources()
     {
@@ -55,6 +56,9 @@ public class Player
         return false;
     }
 
+    #endregion
+
+    #region move
     // 移动玩家到目标位置
     public IEnumerator MoveTo(MapManager mapManager, int steps)
     {
@@ -74,7 +78,10 @@ public class Player
             yield return new WaitForSeconds(0.1f);
         }
     }
+    #endregion
 
+
+    #region money
     // 玩家花费了钱
     public void SpendMoney(int amount)
     {
@@ -85,6 +92,6 @@ public class Player
     {
         money += amount;
     }
+    #endregion
 
-    // 获取当前玩家
 }

@@ -7,11 +7,12 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    // 单例
+    public static GameManager Instance;
     public MapManager mapManager;
-    public PlayerManager playerManager;
     public TileEventManager tileEventManager;
     public Button rollDiceButton;
-    // public List<TileController> boardTiles = new List<TileController>();
+
 
     IEnumerator Start()
     {
@@ -21,40 +22,27 @@ public class GameManager : MonoBehaviour
 
     private void SetupGame()
     {
-        // boardTiles = GetSortedTileControllers();
         rollDiceButton.onClick.AddListener(() => StartCoroutine(TakeTurn()));
-        playerManager.InitializePlayers();
-        tileEventManager.gameManager = this;
-        tileEventManager.playerManager = playerManager;
+        PlayerManager.Instance.InitializePlayers();
 
-        // foreach (var tile in boardTiles)
-        // {
-        //     tile.tileEventManager = tileEventManager;
-        // }
-
-        // UpdateInfoText();
-        StartCoroutine(TileManager.Instance.AutoBuyAndUpgradeCity(playerManager.GetPlayerByIndex(0), 1));
+        // 测试
+        StartCoroutine(TileManager.Instance.AutoBuyAndUpgradeCity(PlayerManager.Instance.GetPlayerByIndex(0), 1));
     }
-
-    // private List<TileController> GetSortedTileControllers()
-    // {
-    //     return FindObjectsOfType<TileController>().OrderBy(t => t.tileIndex).ToList();
-    // }
 
     private IEnumerator TakeTurn()
     {
         rollDiceButton.interactable = false;
-        Player currentPlayer = playerManager.GetCurrentPlayer();
+        Player currentPlayer = PlayerManager.Instance.GetCurrentPlayer();
         int diceRoll = RollDice();
         UIManager.Instance.ShowTurnInfo($"{currentPlayer.name} 掷出了 {diceRoll} 点");
         yield return new WaitForSeconds(1f);
 
-        yield return StartCoroutine(playerManager.MovePlayer(currentPlayer, diceRoll));
+        yield return StartCoroutine(PlayerManager.Instance.MovePlayer(currentPlayer, diceRoll));
         yield return StartCoroutine(tileEventManager.ProcessTileEvent(currentPlayer, currentPlayer.currentTileIndex));
 
-        playerManager.SwitchPlayer();
-        UIManager.Instance.ShowTurnInfo($"当前回合: {playerManager.GetCurrentPlayer().name}\n");
-        playerManager.UpdatePlayerInfoText();
+        PlayerManager.Instance.SwitchPlayer();
+        UIManager.Instance.ShowTurnInfo($"当前回合: {PlayerManager.Instance.GetCurrentPlayer().name}\n");
+        PlayerManager.Instance.UpdatePlayerInfoText();
         rollDiceButton.interactable = true;
     }
 
