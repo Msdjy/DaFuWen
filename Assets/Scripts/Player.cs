@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections;
 using System;
 using System.Linq.Expressions;
+using UnityEngine.Animations;
 
 public class Player
 {
@@ -16,6 +17,7 @@ public class Player
     /// </summary>
     public int currentTileIndex;
     public GameObject avatar;
+    public Animator animator;
     /// <summary>
     /// 用于显示玩家名称和资金信息的 TextMeshPro 组件
     // /// </summary>

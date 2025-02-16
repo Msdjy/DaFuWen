@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections;
 using System;
 using System.Linq.Expressions;
+using UnityEngine.Animations;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -64,6 +65,19 @@ public class PlayerManager : MonoBehaviour
         newPlayer.avatar = Instantiate(playerPrefabs[index], startPos, Quaternion.identity);
         newPlayer.SetAvatarColor(newPlayer.avatar, newPlayer);
 
+        // 查找所有子对象的 Animator 组件
+        Animator[] animators = newPlayer.avatar.GetComponentsInChildren<Animator>();
+
+        if (animators.Length > 0)
+        {
+            newPlayer.animator = animators[0]; // 假设第一个 Animator 就是我们需要的
+        }
+        else
+        {
+            Debug.LogError("No Animator found in the avatar's children!");
+        }
+
+
         return newPlayer;
     }
 
@@ -81,7 +95,9 @@ public class PlayerManager : MonoBehaviour
 
     public IEnumerator MovePlayer(Player player, int steps)
     {
+        player.animator.SetBool("isMoving", true); // 开始走路动画
         yield return StartCoroutine(player.MoveTo(steps)); // 调用Player类中的MoveTo方法
+        player.animator.SetBool("isMoving", false); // 停止走路动画，切换回空闲状态
     }
     #endregion
 
