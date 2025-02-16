@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
         rollDiceButton.onClick.AddListener(() => StartCoroutine(TakeTurn()));
         PlayerManager.Instance.InitializePlayers();
 
-        // 测试
+        // TEST 测试
         StartCoroutine(TileEventManager.Instance.AutoBuyAndUpgradeCityAndResource(PlayerManager.Instance.GetPlayerByIndex(0), 1));
     }
 

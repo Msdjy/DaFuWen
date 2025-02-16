@@ -58,31 +58,16 @@ public class PlayerManager : MonoBehaviour
 
     private Player CreatePlayer(int index)
     {
-        Player newPlayer = new Player
-        {
-            name = $"Player {index + 1}",
-            money = 15000,
-            currentTileIndex = 0,
-            playerColor = playerColors[index]
-        };
-        newPlayer.InitializeResources();
+        Player newPlayer = new Player($"Player {index + 1}", playerColors[index], playerPrefabs[index]);
 
         Vector3 startPos = TileManager.Instance.GetTileDataPositionByIndex(newPlayer.currentTileIndex);
         newPlayer.avatar = Instantiate(playerPrefabs[index], startPos, Quaternion.identity);
-
-        SetAvatarColor(newPlayer.avatar, newPlayer);
+        newPlayer.SetAvatarColor(newPlayer.avatar, newPlayer);
 
         return newPlayer;
     }
 
-    private void SetAvatarColor(GameObject avatar, Player player)
-    {
-        MeshRenderer avatarRenderer = avatar.GetComponentInChildren<MeshRenderer>();
-        if (avatarRenderer != null)
-        {
-            avatarRenderer.material.color = player.playerColor;
-        }
-    }
+
     #endregion
 
     #region Turn
@@ -93,8 +78,6 @@ public class PlayerManager : MonoBehaviour
     #endregion
 
     #region Move 
-    public Player GetCurrentPlayer() => players[currentPlayerIndex];
-
 
     public IEnumerator MovePlayer(Player player, int steps)
     {
@@ -102,12 +85,25 @@ public class PlayerManager : MonoBehaviour
     }
     #endregion
 
-    
 
-
-    #region Update
+    #region Get Player
+    public Player GetCurrentPlayer() => players[currentPlayerIndex];
     // 根据index获取玩家
     public Player GetPlayerByIndex(int index) => players[index];
+    #endregion
+
+    #region Try buy or upgrade
+    public bool trySpendMonryForCity(Player player, int cost)
+    {
+        if (CanPlayerAfford(player, cost))
+        {
+            SpendMoney(player, cost);
+            AddHousePrice(player, cost / 2);
+            return true;
+        }
+        return false;
+    } 
+
     #endregion
 
     #region Money
@@ -117,22 +113,25 @@ public class PlayerManager : MonoBehaviour
         Player player1 = GetPlayerByIndex(playerIndex1);
         Player player2 = GetPlayerByIndex(playerIndex2);
 
-        player1.SpendMoney(rent);
-        player2.EarnMoney(rent);
+        SpendMoney(player1, rent);
+        EarnMoney(player2, rent);
+
         ShowPlayerInfo();
     }
-
-
     // 玩家X花费了钱
     public void SpendMoney(Player player, int amount)
     {
+        Debug.Log($"{player.name} 的金钱（支付前）：{player.money}");
         player.SpendMoney(amount);
+        Debug.Log($"{player.name} 的金钱（支付后）：{player.money}");
         ShowPlayerInfo();
     }
     // 玩家x获得了钱
     public void EarnMoney(Player player, int amount)
     {
+        Debug.Log($"{player.name} 的金钱（收取前）：{player.money}");
         player.EarnMoney(amount);
+        Debug.Log($"{player.name} 的金钱（收取后）：{player.money}");
         ShowPlayerInfo();
     }
     // 判断玩家钱是否够

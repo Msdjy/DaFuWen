@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System;
+using System.Linq;
 using System.Collections;
+using System;
+using System.Linq.Expressions;
 
 public class Player
 {
@@ -26,7 +28,30 @@ public class Player
     // 新增的字段：玩家的颜色
     public Color playerColor;
 
+    #region Create
+    // 默认构造
+    public Player(string name, Color playColor, GameObject avatar, int money = 5000, int currentTileIndex = 0)
+    {
+        this.name = name;
+        this.money = money;
+        this.currentTileIndex = currentTileIndex;
+        this.playerColor = playColor;
+
+        InitializeResources();
+    }
+    #endregion
+
+    public void SetAvatarColor(GameObject avatar, Player player)
+    {
+        MeshRenderer avatarRenderer = avatar.GetComponentInChildren<MeshRenderer>();
+        if (avatarRenderer != null)
+        {
+            avatarRenderer.material.color = player.playerColor;
+        }
+    }
+
     #region resource
+
     // 初始化资源
     public void InitializeResources()
     {

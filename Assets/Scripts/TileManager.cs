@@ -128,9 +128,11 @@ public class TileManager : MonoBehaviour
         }
     }
     // tile 玩家拥有
-    public void ownerTile(TileData tileData, int playerIndex, Color playerColor)
+    public void ownerTile(Tile tile, int playerIndex, Color playerColor)
     {
-        tileData.tile.updateOwner(playerIndex);
+        TileData tileData = GetTileDataById(tile.id);
+
+        tile.updateOwner(playerIndex);
 
         // 染色
         MeshRenderer cubeRenderer = tileData.tileObject.GetComponentInChildren<MeshRenderer>();
@@ -139,7 +141,7 @@ public class TileManager : MonoBehaviour
             cubeRenderer.material.color = playerColor;
         }
 
-        Debug.Log($"Tile {name} 被玩家 {playerIndex} 购买");
+        Debug.Log($"Tile {name} 被玩家 {PlayerManager.Instance.GetPlayerByIndex(playerIndex).name} 购买");
     }
 
     // 根据城市的等级选择相应的城市模型，并将其放置在 Tile 上

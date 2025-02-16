@@ -62,7 +62,7 @@ public class TileEventManager : MonoBehaviour
             else if (tile.owner != PlayerManager.Instance.currentPlayerIndex)
             {
                 // 当前玩家向城市所有者支付租金
-                PlayerManager.Instance.PayRent(player.playerIndex, tile.owner, tile.rent);
+                PlayerManager.Instance.PayRent(PlayerManager.Instance.currentPlayerIndex, tile.owner, tile.rent);
                 ShowEventInfo($"\n{player.name} 向 {PlayerManager.Instance.GetPlayerByIndex(tile.owner).name} 支付了租金 ${tile.rent}");
 
             }
@@ -87,14 +87,15 @@ public class TileEventManager : MonoBehaviour
         }
         else
         {
+            ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子");
             // 对于其他类型的格子，处理资源、市场等
-            HandleOtherTileTypes(player, tile);
+            yield return StartCoroutine( HandleOtherTileTypes(player, tile));
         }
         yield return null;
     }
 
     // 对于其他类型的格子，处理资源、市场等
-    private void HandleOtherTileTypes(Player player, Tile tile)
+    private IEnumerator HandleOtherTileTypes(Player player, Tile tile)
     {
         if (tile != null)
         {
@@ -105,8 +106,10 @@ public class TileEventManager : MonoBehaviour
                     ShowEventInfo($"\n{player.name} 落在了 {tile.name} 格子，获得 $800");
                     break;
                 case "market":
-                    // TODO 资源购买Panle
                     ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
+                    // TODO 资源购买Panle
+                    // 现在就购买随机卡
+                    yield return StartCoroutine(ShowPurchaseResourcePanel(player));
                     break;
                 case "pirate":
                     ShowEventInfo($"\n{player.name} 落在了 {tile.name}");
@@ -131,6 +134,46 @@ public class TileEventManager : MonoBehaviour
 
 
     #region Panel button
+
+    public IEnumerator ShowPurchaseResourcePanel(Player player)
+    {
+        // 显示购买资源的提示信息
+        ShowPurchasePanelText($"{player.name}，是否购买一张资源卡？价格: $300?");
+        
+        decisionMade = false;
+        buyDecision = false;
+        SetPurchasePanelActive(true);
+
+        // 等待玩家做出决定
+        while (!decisionMade)
+        {
+            yield return null;
+        }
+
+        if (buyDecision)
+        {
+            int cost = 300;  // 假设资源卡的固定价格为300
+            // 判断玩家是否有足够资金
+            if (PlayerManager.Instance.CanPlayerAfford(player, cost))
+            {
+                PlayerManager.Instance.SpendMoney(player, cost);
+                // 购买资源卡
+                PlayerManager.Instance.AddRandomResource(player);
+                ShowEventInfo($"\n{player.name} 购买了一张资源卡，花费了 ${cost}");
+            }
+            else
+            {
+                ShowEventInfo($"\n{player.name} 资金不足，无法购买资源卡");
+            }
+        }
+        else
+        {
+            ShowEventInfo($"\n{player.name} 放弃了购买资源卡");
+        }
+        
+        SetPurchasePanelActive(false);
+    }
+
     public IEnumerator ShowUpgradePanel(Player player, Tile tile)
     {
         ShowPurchasePanelText($"{player.name}，是否花费 ${tile.upgradeCosts[tile.level]} 升级 {tile.name}?");
@@ -144,15 +187,13 @@ public class TileEventManager : MonoBehaviour
         }
 
         if (buyDecision)
-        {
+        {   
+            int cost = tile.upgradeCosts[tile.level];
             // 玩家钱够
-            if (PlayerManager.Instance.CanPlayerAfford(player, tile.upgradeCosts[tile.level]))
+            if (PlayerManager.Instance.trySpendMonryForCity(player, cost))
             {
-                PlayerManager.Instance.SpendMoney(player, tile.upgradeCosts[tile.level]);
-                PlayerManager.Instance.AddHousePrice(player, tile.upgradeCosts[tile.level] / 2);
                 TileManager.Instance.UpgradeTile(tile);
-
-                ShowEventInfo($"\n{player.name} 升级了 {tile.name}。花费了 ${tile.upgradeCosts[tile.level]}");
+                ShowEventInfo($"\n{player.name} 升级了 {tile.name}。花费了 ${cost}");
             }
             else
             {
@@ -181,13 +222,11 @@ public class TileEventManager : MonoBehaviour
 
         if (buyDecision)
         {
-            if (PlayerManager.Instance.CanPlayerAfford(player, tile.price))
+            int cost = tile.price;
+            if (PlayerManager.Instance.trySpendMonryForCity(player, cost))
             {
-                PlayerManager.Instance.SpendMoney(player, tile.price);
-                PlayerManager.Instance.AddHousePrice(player, tile.price / 2);
-                TileManager.Instance.ownerTile(tileData, player.playerIndex, player.playerColor);
-
-                ShowEventInfo($"\n{player.name} 购买了 {tile.name}， 花费了 ${tile.price}");
+                TileManager.Instance.ownerTile(tile, player.playerIndex, player.playerColor);
+                ShowEventInfo($"\n{player.name} 购买了 {tile.name}， 花费了 ${cost}");
             }
             else
             {
@@ -366,7 +405,7 @@ public class TileEventManager : MonoBehaviour
         {   
             PlayerManager.Instance.SpendMoney(player, tileData.tile.price);
             PlayerManager.Instance.AddHousePrice(player, tileData.tile.price / 2);
-            TileManager.Instance.ownerTile(tileData, player.playerIndex, player.playerColor);
+            TileManager.Instance.ownerTile(tileData.tile, player.playerIndex, player.playerColor);
         }
         
         // 升级城市三次

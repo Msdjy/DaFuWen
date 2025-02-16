@@ -9,14 +9,21 @@ public class MapManager : MonoBehaviour
     [Header("地图配置")]
     [Tooltip("将 JSON 地图配置文件拖拽到此处")]
     public TextAsset jsonConfig;
-    // [Tooltip("用于生成 Tile 的预制体（内容为 Cube）")]
-    // public GameObject tilePrefab;
-    [Tooltip("Tile 之间的间距（此参数不再直接用于位置计算）")]
-    public float spacing = 2.0f;
-    [Tooltip("Tile 在 Y 轴上的偏移")]
-    public float yOffset = 0f;
 
+    
+    [Tooltip("Tile 在 Y 轴上的偏移")]
+    public float yOffset = 0f; // 没有用到
     #endregion
+
+
+    // 最内圈坐标
+    private float baseCoordinate = 8.5f;
+    // 内圈坐标，基于最内圈往外延申位置，用于玩家模型的移动位置
+    private float innerOffset = 0.5f;
+    // 外圈坐标，基于最内圈往外延申，用于tile模型位置摆放
+    private float outerOffset = 2.24f;
+
+
 
     #region Runtime Data
     [HideInInspector]
@@ -129,7 +136,7 @@ public class MapManager : MonoBehaviour
     {
         Vector3 baseInner, normal;
         CalculateBaseInnerAndNormal(r, c, out baseInner, out normal);
-        float innerOffset = 0.5f;
+
         return baseInner + normal * innerOffset;
     }
 
@@ -137,7 +144,6 @@ public class MapManager : MonoBehaviour
     {
         Vector3 baseInner, normal;
         CalculateBaseInnerAndNormal(r, c, out baseInner, out normal);
-        float outerOffset = 2.24f;
         return baseInner + normal * outerOffset;
     }
 
@@ -153,49 +159,49 @@ public class MapManager : MonoBehaviour
 
         if (isBottom && isLeft)
         {
-            baseInner = new Vector3(-8.5f, yOffset, -8.5f);
+            baseInner = new Vector3(-baseCoordinate, yOffset, -baseCoordinate);
             normal = new Vector3(-1, 0, -1);
         }
         else if (isBottom && isRight)
         {
-            baseInner = new Vector3(8.5f, yOffset, -8.5f);
+            baseInner = new Vector3(baseCoordinate, yOffset, -baseCoordinate);
             normal = new Vector3(1, 0, -1);
         }
         else if (isTop && isLeft)
         {
-            baseInner = new Vector3(-8.5f, yOffset, 8.5f);
+            baseInner = new Vector3(-baseCoordinate, yOffset, baseCoordinate);
             normal = new Vector3(-1, 0, 1);
         }
         else if (isTop && isRight)
         {
-            baseInner = new Vector3(8.5f, yOffset, 8.5f);
+            baseInner = new Vector3(baseCoordinate, yOffset, baseCoordinate);
             normal = new Vector3(1, 0, 1);
         }
         else if (isBottom)
         {
-            baseInner.x = Mathf.Lerp(-8.5f, 8.5f, (float)c / (config.columns - 1));
-            baseInner.z = -8.5f;
+            baseInner.x = Mathf.Lerp(-baseCoordinate, baseCoordinate, (float)c / (config.columns - 1));
+            baseInner.z = -baseCoordinate;
             baseInner.y = yOffset;
             normal = new Vector3(0, 0, -1);
         }
         else if (isTop)
         {
-            baseInner.x = Mathf.Lerp(-8.5f, 8.5f, (float)c / (config.columns - 1));
-            baseInner.z = 8.5f;
+            baseInner.x = Mathf.Lerp(-baseCoordinate, baseCoordinate, (float)c / (config.columns - 1));
+            baseInner.z = baseCoordinate;
             baseInner.y = yOffset;
             normal = new Vector3(0, 0, 1);
         }
         else if (isLeft)
         {
-            baseInner.x = -8.5f;
-            baseInner.z = Mathf.Lerp(8.5f, -8.5f, (float)r / (config.rows - 1));
+            baseInner.x = -baseCoordinate;
+            baseInner.z = Mathf.Lerp(baseCoordinate, -baseCoordinate, (float)r / (config.rows - 1));
             baseInner.y = yOffset;
             normal = new Vector3(-1, 0, 0);
         }
         else if (isRight)
         {
-            baseInner.x = 8.5f;
-            baseInner.z = Mathf.Lerp(8.5f, -8.5f, (float)r / (config.rows - 1));
+            baseInner.x = baseCoordinate;
+            baseInner.z = Mathf.Lerp(baseCoordinate, -baseCoordinate, (float)r / (config.rows - 1));
             baseInner.y = yOffset;
             normal = new Vector3(1, 0, 0);
         }
